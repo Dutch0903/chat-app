@@ -19,14 +19,10 @@ public class AuthController {
     private RegistrationService registrationService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws UsernameOrEmailAlreadyInUseException {
         RegistrationData registrationData = registerRequest.getRegistrationData();
 
-        try {
-            this.registrationService.register(registrationData);
-        } catch (UsernameOrEmailAlreadyInUseException e) {
-            return ResponseEntity.badRequest().body("Username or Email is already in use!");
-        }
+        this.registrationService.register(registrationData);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
