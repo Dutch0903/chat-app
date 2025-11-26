@@ -1,0 +1,16 @@
+name: chat-app
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=chat-app-dbadmin
+      - POSTGRES_PASSWORD=chat-app-dummy-password
+      - POSTGRES_DB=chat-app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
