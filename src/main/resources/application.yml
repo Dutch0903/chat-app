@@ -15,3 +15,6 @@ spring:
     username: chat-app-dbadmin
     password: chat-app-dummy-password
 
+jwt:
+  secret: kKTDPrQuzfFaamgYGAUeZZEDMgtdGRvV
+  expiration: 3600000
