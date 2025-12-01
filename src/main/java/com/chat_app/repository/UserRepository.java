@@ -1,11 +1,14 @@
 package com.chat_app.repository;
 
 import com.chat_app.entity.User;
+import com.chat_app.valueobjects.UserId;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository {
-    boolean exists(String username, String email);
+@Repository
+public interface UserRepository extends CrudRepository<User, UserId> {
 
-    int save(User user);
+    boolean existsByUsernameOrEmail(String username, String email);
 
     User findByUsername(String username);
 }

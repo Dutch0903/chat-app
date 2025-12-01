@@ -1,6 +1,7 @@
 package com.chat_app.controller;
 
 import com.chat_app.dto.RegistrationData;
+import com.chat_app.exception.RoleNotFoundException;
 import com.chat_app.exception.UsernameOrEmailAlreadyInUseException;
 import com.chat_app.request.LoginRequest;
 import com.chat_app.request.RegisterRequest;
@@ -73,7 +74,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws UsernameOrEmailAlreadyInUseException {
+    public ResponseEntity<?> register(
+            @Valid @RequestBody RegisterRequest registerRequest
+    ) throws UsernameOrEmailAlreadyInUseException, RoleNotFoundException {
         RegistrationData registrationData = registerRequest.getRegistrationData();
 
         this.registrationService.register(registrationData);

@@ -2,6 +2,7 @@ package com.chat_app.security;
 
 import com.chat_app.entity.User;
 import com.chat_app.repository.UserRepository;
+import com.chat_app.type.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         Set<GrantedAuthority> authorities =
                 user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.name()))
+                        .map(role -> new SimpleGrantedAuthority(RoleName.USER.toString()))
                         .collect(Collectors.toSet());
 
         return UserDetailsImpl.builder()
