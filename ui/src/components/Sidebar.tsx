@@ -1,7 +1,10 @@
 // src/views/components/Sidebar.tsx
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/use-auth";
 
 export default function Sidebar() {
+  const { user } = useAuth();
+
   return (
     <aside className="w-56 bg-gray-900 text-white h-full flex flex-col p-4">
       <div className="mb-6 font-bold text-lg">Chat App</div>
@@ -26,7 +29,7 @@ export default function Sidebar() {
       </nav>
       <div className="mt-auto text-sm text-gray-400">
         {/* Optionally show user info or logout button here */}
-        Logged in as User
+        Logged in as {user?.username}
       </div>
     </aside>
   );

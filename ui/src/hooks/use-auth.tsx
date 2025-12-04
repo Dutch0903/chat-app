@@ -5,11 +5,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { apiFetch } from "../api";
 import type { User } from "../types/user";
 
 type AuthContextType = {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   register: (
     email: string,
     password: string,
@@ -31,10 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch("/api/auth/me", {
-        credentials: "include",
-      });
-      const data = await response.json();
+      const data = await apiFetch<User>("/auth/me");
       setUser(data);
     } catch (error) {
       console.error("Failed to check auth status:", error);
@@ -44,21 +42,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (email: string, password: string) => {
-    const response = await fetch("/api/auth/login", {
+  const login = async (username: string, password: string) => {
+    const data = await apiFetch<User>("/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Failed to sign in");
-    }
-
-    const data = await response.json();
     setUser(data);
   };
 
@@ -67,11 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     username: string,
   ) => {
-    const response = await fetch("/api/auth/register", {
+    const data = await apiFetch<User>("/auth/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
         email,
         password,
@@ -79,17 +65,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Failed to sign up");
-    }
-
-    const data = await response.json();
     setUser(data);
   };
 
   const logout = async () => {
-    await fetch("api/auth/logout", {
+    await fetch("/auth/logout", {
       method: "POST",
     });
 

@@ -7,7 +7,7 @@ export default function Login() {
       <Card className="w-full max-w-md">
         <CardHeader>Login</CardHeader>
         <CardContent>
-          <LoginForm/>
+          <LoginForm />
         </CardContent>
       </Card>
     </div>

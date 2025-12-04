@@ -1,21 +1,25 @@
 import { Button, TextField } from "@mui/material";
 import { useState, type ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import z, { ZodError } from "zod";
 import { useAuth } from "../../../hooks/use-auth";
 
 const loginSchema = z.object({
-  email: z.email("Invalid email address"),
+  username: z.string().min(1, "Username is required"),
   password: z.string().min(1, "Password is required"),
 });
 
+type RedirectLocationState = {
+  redirectTo: Location;
+};
+
 export default function LoginForm() {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   const [errors, setErrors] = useState<{
-    email?: string;
+    username?: string;
     password?: string;
     submit?: string;
   }>({});
@@ -23,6 +27,7 @@ export default function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
+  const { state: locationState } = useLocation();
 
   const { login } = useAuth();
 
@@ -33,9 +38,11 @@ export default function LoginForm() {
 
       const validatedData = loginSchema.parse(data);
 
-      await login(validatedData.email, validatedData.password);
+      await login(validatedData.username, validatedData.password);
 
-      navigate("/app");
+      const { redirectTo } = locationState as RedirectLocationState;
+
+      navigate(redirectTo ?? "/chats");
     } catch (error) {
       if (error instanceof ZodError) {
         const formattedErrors: Record<string, string> = {};
@@ -77,11 +84,11 @@ export default function LoginForm() {
         <TextField
           onChange={handleChange}
           required
-          name="email"
-          type="email"
-          value={formData.email}
-          placeholder="Enter your email"
-          className={errors.email ? "border-red-500" : ""}
+          name="username"
+          type="username"
+          value={formData.username}
+          placeholder="Enter your username"
+          className={errors.username ? "border-red-500" : ""}
         />
       </div>
       <div className="space-y-2">
