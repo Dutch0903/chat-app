@@ -38,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         Set<GrantedAuthority> authorities = getRoleNames(user).stream()
-                .map(roleName -> new SimpleGrantedAuthority(roleName))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
 
         return UserDetailsImpl.builder()
