@@ -3,6 +3,7 @@ package com.chat_app.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -46,6 +47,15 @@ public class JwtUtils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String parseJwt(StompHeaderAccessor accessor) {
+        String token = accessor.getFirstNativeHeader("Authorization");
+        String jwt = null;
+        if (token != null) {
+            jwt = token.substring(7);
+        }
+        return jwt;
     }
 
     private SecretKey key() {
