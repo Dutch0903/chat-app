@@ -1,6 +1,6 @@
 import { Button, TextField } from "@mui/material";
 import { useState, type ChangeEvent } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import z, { ZodError } from "zod";
 import { useAuth } from "../../../hooks/use-auth";
 
@@ -8,10 +8,6 @@ const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
   password: z.string().min(1, "Password is required"),
 });
-
-type RedirectLocationState = {
-  redirectTo: Location;
-};
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -27,7 +23,6 @@ export default function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
-  const { state: locationState } = useLocation();
 
   const { login } = useAuth();
 
@@ -40,9 +35,7 @@ export default function LoginForm() {
 
       await login(validatedData.username, validatedData.password);
 
-      const { redirectTo } = locationState as RedirectLocationState;
-
-      navigate(redirectTo ?? "/chats");
+      navigate("/chats");
     } catch (error) {
       if (error instanceof ZodError) {
         const formattedErrors: Record<string, string> = {};
