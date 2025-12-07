@@ -3,7 +3,6 @@ package com.chat_app.config;
 import com.chat_app.security.WebSocketTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.tomcat.reactive.TomcatReactiveWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -17,14 +16,13 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.server.RequestUpgradeStrategy;
 import org.springframework.web.socket.server.standard.StandardWebSocketUpgradeStrategy;
-import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 @Configuration
 @EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
-    @Value("http://localhost:5174")
+    @Value("${frontend.caller.host:http://localhost:5174}")
     private String frontendCallerHost;
 
     @Autowired
@@ -51,7 +49,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                 .setApplicationDestinationPrefixes("/app")
                 .enableSimpleBroker("/topic")
                 .setTaskScheduler(heartBeatScheduler())
-                .setHeartbeatValue(new long[] {10000L, 10000L});
+                .setHeartbeatValue(new long[]{10000L, 10000L});
     }
 
     @Bean
