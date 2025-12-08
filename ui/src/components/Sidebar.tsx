@@ -6,7 +6,7 @@ export default function Sidebar() {
   const { user } = useAuth();
 
   return (
-    <aside className="w-56 bg-gray-900 text-white h-full flex flex-col p-4">
+    <aside className="w-56 bg-gray-100 text-white h-full flex flex-col p-4">
       <div className="mb-6 font-bold text-lg">Chat App</div>
       <nav className="flex-1">
         <ul className="space-y-2">

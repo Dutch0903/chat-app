@@ -7,7 +7,7 @@ import Register from "./views/Register/Register";
 
 function App() {
   return (
-    <div className="grid h-screen grid-rows-[auto_1fr_auto] bg-red-500">
+    <div className="grid h-screen grid-rows-[auto_1fr_auto] bg-red-100">
       <AuthProvider>
         <BrowserRouter>
           <Routes>
