@@ -64,6 +64,7 @@ public class AuthController {
 
         Cookie accessTokenCookie = new Cookie("access_token", token);
         accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
 
         response.addCookie(accessTokenCookie);
 
