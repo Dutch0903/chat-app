@@ -56,7 +56,7 @@ public class AuthController {
         JwtResponse jwtResponse =
                 JwtResponse.builder()
                         .token(token)
-                        .id(userDetails.getId())
+                        .id(userDetails.getId().value())
                         .username(userDetails.getUsername())
                         .email(userDetails.getEmail())
                         .roles(roles)

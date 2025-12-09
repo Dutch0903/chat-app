@@ -1,5 +1,6 @@
 package com.chat_app.security;
 
+import com.chat_app.valueobjects.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Builder
 public class UserDetailsImpl implements UserDetails {
 
-    private final UUID id;
+    private final UserId id;
 
     private String password;
 
