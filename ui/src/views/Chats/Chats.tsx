@@ -1,11 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWebSocketClient } from "../../hooks/use-websocket";
+import { Events } from "../../socket/Events";
+import type { MessageEvent } from "../../socket/events/MessageEvent";
 
 export default function Chats() {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
 
   const { socketClient } = useWebSocketClient();
+
+  useEffect(() => {
+    if (!socketClient) {
+      return;
+    }
+
+    const subscription = socketClient?.subscribe("/topic/messages", {
+      [Events.Chat]: (event: MessageEvent) => {
+        console.log("Message received: ", event);
+        setMessages([...messages, event.content]);
+      },
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  });
 
   const sendMessage = () => {
     if (socketClient?.isConnected()) {
@@ -14,7 +33,7 @@ export default function Chats() {
         endpoint: "/app/sendMessage",
         body: {
           content: newMessage,
-          type: "message",
+          type: Events.Chat,
         },
       });
     } else {

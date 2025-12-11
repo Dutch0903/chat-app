@@ -22,7 +22,7 @@ export default function OnlineUsers() {
         console.log("User went offline: ", event);
         const index: number = onlineUsers.indexOf(event.username);
         if (index > -1) {
-          setOnlineUsers(onlineUsers.splice(index, 1));
+          setOnlineUsers([...onlineUsers.splice(index, 1)]);
         }
       },
     });
