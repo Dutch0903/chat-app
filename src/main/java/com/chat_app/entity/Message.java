@@ -15,6 +15,6 @@ import java.util.UUID;
 public class Message {
     private UUID id;
 
-    private String content;
+    private String username;
     private MessageType type;
 }
