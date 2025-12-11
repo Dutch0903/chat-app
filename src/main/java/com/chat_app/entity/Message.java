@@ -16,5 +16,6 @@ public class Message {
     private UUID id;
 
     private String username;
+    private String content;
     private MessageType type;
 }
