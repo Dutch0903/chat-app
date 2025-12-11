@@ -1,53 +1,21 @@
-import { Client } from "@stomp/stompjs";
-import { useEffect, useRef, useState } from "react";
-import SockJS from "sockjs-client/dist/sockjs";
+import { useState } from "react";
+import { useWebSocketClient } from "../../hooks/use-websocket";
 
 export default function Chats() {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
 
-  const webSocketUrl = "http://localhost:8090/ws";
-  const clientRef = useRef<Client | null>(null);
-
-  useEffect(() => {
-    const socket = new SockJS(webSocketUrl);
-    const client = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      debug: (str) => console.log("Debug log: " + str),
-      onConnect: () => {
-        console.log("Connected to WebSocket");
-
-        client.subscribe("/topic/messages", (response) => {
-          console.log("Message received:", response.body);
-          setMessages((prev) => [...prev, response.body]);
-        });
-      },
-      onStompError: (frame) => {
-        console.error("Broker reported error: " + frame.headers["message"]);
-        console.error("Additional details: " + frame.body);
-      },
-    });
-
-    client.activate();
-    clientRef.current = client;
-
-    return () => {
-      client.deactivate();
-      clientRef.current = null;
-    };
-  }, []);
+  const { socketClient } = useWebSocketClient();
 
   const sendMessage = () => {
-    const client = clientRef.current;
-
-    if (client && client.connected) {
+    if (socketClient?.isConnected()) {
       console.log("Sending message:", newMessage);
-      client.publish({
-        destination: "/app/sendMessage",
-        body: JSON.stringify({
+      socketClient.publish({
+        endpoint: "/app/sendMessage",
+        body: {
           content: newMessage,
-        }),
+          type: "message",
+        },
       });
     } else {
       console.error("Client is not connected!");
