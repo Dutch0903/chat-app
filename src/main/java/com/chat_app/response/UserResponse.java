@@ -9,7 +9,7 @@ public record UserResponse(
         String username,
         String email
 ) {
-    public static UserResponse create(User user) {
+    public static UserResponse from(User user) {
         return new UserResponse(
                 user.getId().value(),
                 user.getUsername(),

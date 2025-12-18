@@ -5,7 +5,6 @@ import com.chat_app.response.UserResponse;
 import com.chat_app.service.OnlineOfflineService;
 import com.chat_app.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,13 +23,13 @@ public class UserController {
     public ResponseEntity<?> get() {
         List<User> users = userService.getAllUsers();
 
-        return ResponseEntity.ok(users.stream().map(UserResponse::create));
+        return ResponseEntity.ok(users.stream().map(UserResponse::from));
     }
 
     @GetMapping("/online")
     public ResponseEntity<?> getOnlineUsers() {
         List<User> onlineUsers = onlineOfflineService.getOnlineUsers();
 
-        return ResponseEntity.ok(onlineUsers.stream().map(UserResponse::create));
+        return ResponseEntity.ok(onlineUsers.stream().map(UserResponse::from));
     }
 }
