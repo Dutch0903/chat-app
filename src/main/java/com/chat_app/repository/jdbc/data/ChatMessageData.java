@@ -3,7 +3,7 @@ package com.chat_app.repository.jdbc.data;
 import com.chat_app.entity.ChatMessage;
 import com.chat_app.valueobjects.ChatId;
 import com.chat_app.valueobjects.ChatMessageId;
-import com.chat_app.valueobjects.ChatParticipantId;
+import com.chat_app.valueobjects.ParticipantId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
@@ -38,7 +38,7 @@ public class ChatMessageData {
         return new ChatMessage(
                 new ChatMessageId(this.id),
                 new ChatId(this.chatId),
-                new ChatParticipantId(this.senderId),
+                new ParticipantId(this.senderId),
                 this.content,
                 this.createdAt
         );

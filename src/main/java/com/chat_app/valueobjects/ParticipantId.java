@@ -4,8 +4,8 @@ import org.springframework.util.Assert;
 
 import java.util.UUID;
 
-public record ChatParticipantId(UUID value) {
-    public ChatParticipantId{
+public record ParticipantId(UUID value) {
+    public ParticipantId {
         Assert.notNull(value, "Chat participant id cannot be null");
     }
 }

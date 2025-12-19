@@ -18,4 +18,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handleIllegalArgumentException(IllegalArgumentException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ProblemDetail handleForbiddenException(ForbiddenException exception) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "Access denied");
+    }
 }

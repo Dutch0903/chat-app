@@ -9,5 +9,4 @@ import java.util.UUID;
 
 @Component
 public interface ChatDataSource extends CrudRepository<ChatData, UUID> {
-    List<ChatData> findByIdIn(List<UUID> chatIds);
 }

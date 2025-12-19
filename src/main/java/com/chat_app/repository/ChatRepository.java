@@ -5,11 +5,15 @@ import com.chat_app.repository.jdbc.ChatDataSource;
 import com.chat_app.repository.jdbc.ChatParticipantDataSource;
 import com.chat_app.repository.jdbc.data.ChatData;
 import com.chat_app.repository.jdbc.data.ChatParticipantData;
-import com.chat_app.valueobjects.ChatParticipantId;
+import com.chat_app.valueobjects.ChatId;
+import com.chat_app.valueobjects.ParticipantId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class ChatRepository {
@@ -20,12 +24,26 @@ public class ChatRepository {
     @Autowired
     private ChatParticipantDataSource chatParticipantDataSource;
 
-    public List<Chat> getAllChats(ChatParticipantId chatParticipantId) {
-        List<ChatParticipantData> chats = chatParticipantDataSource.findByParticipantId(chatParticipantId.value());
+    public List<Chat> getAllChats(ParticipantId participantId) {
+        List<ChatParticipantData> chatParticipantDataList = chatParticipantDataSource.findAllByParticipantId(participantId.value());
 
-        return chatDataSource.findByIdIn(chats.stream().map(ChatParticipantData::getChatId).toList())
-                .stream()
-                .map(ChatData::toEntity)
-                .toList();
+        List<UUID> chatIdList = chatParticipantDataList.stream().map(ChatParticipantData::getChatId).toList();
+
+        List<Chat> chats = new ArrayList<>();
+        chatDataSource.findAllById(chatIdList).forEach(chatData -> chats.add(chatData.toEntity()));
+
+        return chats;
+    }
+
+    public Chat findChatByIdAndParticipantId(ChatId chatId, ParticipantId participantId) {
+        boolean isParticipant = chatParticipantDataSource.existsByChatIdAndParticipantId(chatId.value(), participantId.value());
+        if (!isParticipant) {
+            return null;
+        }
+
+        Optional<ChatData> result = chatDataSource.findById(chatId.value());
+
+        return result.map(ChatData::toEntity).orElse(null);
     }
 }
+

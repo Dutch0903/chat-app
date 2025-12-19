@@ -1,6 +1,7 @@
 package com.chat_app.repository.jdbc;
 
 import com.chat_app.repository.jdbc.data.ChatParticipantData;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +10,10 @@ import java.util.UUID;
 
 @Component
 public interface ChatParticipantDataSource extends CrudRepository<ChatParticipantData, UUID> {
-    public List<ChatParticipantData> findByChatId(UUID chatId);
+    List<ChatParticipantData> findAllByParticipantId(UUID participantId);
 
-    public List<ChatParticipantData> findByParticipantId(UUID chatParticipantId);
+    List<ChatParticipantData> findAllByChatId(UUID chatId);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM chat_participants WHERE chat_id = :chatId AND participant_id = :participantId)")
+    boolean existsByChatIdAndParticipantId(UUID chatId, UUID participantId);
 }

@@ -1,8 +1,14 @@
 package com.chat_app.service;
 
+import com.chat_app.dto.ChatDetailsDto;
 import com.chat_app.entity.Chat;
+import com.chat_app.entity.ChatParticipant;
+import com.chat_app.exception.ForbiddenException;
+import com.chat_app.repository.ChatParticipantRepository;
 import com.chat_app.repository.ChatRepository;
-import com.chat_app.valueobjects.ChatParticipantId;
+import com.chat_app.dto.ChatDto;
+import com.chat_app.valueobjects.ChatId;
+import com.chat_app.valueobjects.ParticipantId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +19,24 @@ public class ChatService {
     @Autowired
     private ChatRepository chatRepository;
 
-    public List<Chat> getAllChats(ChatParticipantId chatParticipantId) {
-        return this.chatRepository.getAllChats(chatParticipantId);
+    @Autowired
+    private ChatParticipantRepository chatParticipantRepository;
+
+    public List<ChatDto> getAllChats(ParticipantId participantId) {
+        List<Chat> chats = this.chatRepository.getAllChats(participantId);
+
+        return chats.stream().map(ChatDto::from).toList();
+    }
+
+    public ChatDetailsDto getChatDetails(ChatId chatId, ParticipantId participantId) {
+        Chat chat = chatRepository.findChatByIdAndParticipantId(chatId, participantId);
+
+        if (chat == null) {
+            throw new ForbiddenException("No chat was found for chat id " + chatId.value() + " and participant id " + participantId.value());
+        }
+
+        List<ChatParticipant> participants = chatParticipantRepository.getAllChatParticipants(chatId);
+
+        return ChatDetailsDto.from(chat, participants);
     }
 }
