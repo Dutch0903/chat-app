@@ -35,6 +35,10 @@ public class ChatRepository {
         return chats;
     }
 
+    public Chat getChatById(ChatId chatId) {
+        return chatDataSource.findById(chatId.value()).map(ChatData::toEntity).orElse(null);
+    }
+
     public Chat findChatByIdAndParticipantId(ChatId chatId, ParticipantId participantId) {
         boolean isParticipant = chatParticipantDataSource.existsByChatIdAndParticipantId(chatId.value(), participantId.value());
         if (!isParticipant) {

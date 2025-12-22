@@ -19,6 +19,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(ChatNotFoundException.class)
+    public ProblemDetail handleChatNotFoundException(ChatNotFoundException exception) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
     @ExceptionHandler(ForbiddenException.class)
     public ProblemDetail handleForbiddenException(ForbiddenException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "Access denied");

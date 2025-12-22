@@ -3,10 +3,12 @@ package com.chat_app.service;
 import com.chat_app.dto.ChatDetailsDto;
 import com.chat_app.entity.Chat;
 import com.chat_app.entity.ChatParticipant;
+import com.chat_app.exception.ChatNotFoundException;
 import com.chat_app.exception.ForbiddenException;
 import com.chat_app.repository.ChatParticipantRepository;
 import com.chat_app.repository.ChatRepository;
 import com.chat_app.dto.ChatDto;
+import com.chat_app.type.ChatParticipantRole;
 import com.chat_app.valueobjects.ChatId;
 import com.chat_app.valueobjects.ParticipantId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +40,21 @@ public class ChatService {
         List<ChatParticipant> participants = chatParticipantRepository.getAllChatParticipants(chatId);
 
         return ChatDetailsDto.from(chat, participants);
+    }
+
+    public void addParticipantToChat(ChatId chatId, ParticipantId participantId) {
+        Chat chat = chatRepository.getChatById(chatId);
+
+        if (chat == null) {
+            throw new ChatNotFoundException();
+        }
+
+        ChatParticipant chatParticipant = new ChatParticipant(
+                chat.getId(),
+                participantId,
+                ChatParticipantRole.MEMBER
+        );
+
+        chatParticipantRepository.save(chatParticipant);
     }
 }

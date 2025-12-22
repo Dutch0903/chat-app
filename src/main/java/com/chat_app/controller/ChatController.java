@@ -3,11 +3,13 @@ package com.chat_app.controller;
 import com.chat_app.entity.Message;
 import com.chat_app.dto.ChatDetailsDto;
 import com.chat_app.dto.ChatDto;
+import com.chat_app.request.AddParticipantRequest;
 import com.chat_app.security.UserDetailsImpl;
 import com.chat_app.service.ChatService;
 import com.chat_app.valueobjects.ChatId;
 import com.chat_app.valueobjects.ParticipantId;
 import com.chat_app.valueobjects.UserId;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -56,5 +56,15 @@ public class ChatController {
         ChatDetailsDto details = chatService.getChatDetails(ChatId.from(chatId), new ParticipantId(userId.value()));
 
         return new ResponseEntity<>(details, HttpStatus.OK);
+    }
+
+    @PostMapping("/chats/{chatId}/participants")
+    public ResponseEntity<?> invite(
+            @PathVariable UUID chatId,
+            @Valid @RequestBody AddParticipantRequest addParticipantRequest
+    ) {
+        chatService.addParticipantToChat(ChatId.from(chatId), ParticipantId.from(addParticipantRequest.userId()));
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

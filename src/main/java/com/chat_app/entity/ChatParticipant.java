@@ -6,6 +6,8 @@ import com.chat_app.valueobjects.ParticipantId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 @AllArgsConstructor
 public class ChatParticipant {
