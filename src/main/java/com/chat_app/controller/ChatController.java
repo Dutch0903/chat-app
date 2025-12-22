@@ -1,9 +1,11 @@
 package com.chat_app.controller;
 
-import com.chat_app.entity.Message;
 import com.chat_app.dto.ChatDetailsDto;
 import com.chat_app.dto.ChatDto;
+import com.chat_app.entity.Message;
 import com.chat_app.request.AddParticipantRequest;
+import com.chat_app.request.StartDirectChatRequest;
+import com.chat_app.request.StartGroupChatRequest;
 import com.chat_app.security.UserDetailsImpl;
 import com.chat_app.service.ChatService;
 import com.chat_app.valueobjects.ChatId;
@@ -19,6 +21,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,13 +61,49 @@ public class ChatController {
         return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
+    @PostMapping("/chats/direct")
+    public ResponseEntity<?> startDirectChat(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody StartDirectChatRequest startDirectChatRequest
+    ) {
+        UserId userId = userDetails.getId();
+
+        ChatDetailsDto details = chatService.startDirectChat(
+                ParticipantId.from(userId.value()),
+                ParticipantId.from(startDirectChatRequest.participantId())
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(details);
+    }
+
+    @PostMapping("/chats/group")
+    public ResponseEntity<?> startGroupChat(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody StartGroupChatRequest startGroupChatRequest
+    ) {
+        UserId userId = userDetails.getId();
+
+        List<ParticipantId> participantIds = new  ArrayList<>();
+        participantIds.add(ParticipantId.from(userId.value()));
+        startGroupChatRequest.participants().stream().forEach(id -> {
+            participantIds.add(ParticipantId.from(id));
+        });
+
+        ChatDetailsDto details = chatService.startGroupChat(
+                startGroupChatRequest.name(),
+                participantIds
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(details);
+    }
+
     @PostMapping("/chats/{chatId}/participants")
-    public ResponseEntity<?> invite(
+    public ResponseEntity<?> addParticipant(
             @PathVariable UUID chatId,
             @Valid @RequestBody AddParticipantRequest addParticipantRequest
     ) {
         chatService.addParticipantToChat(ChatId.from(chatId), ParticipantId.from(addParticipantRequest.userId()));
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

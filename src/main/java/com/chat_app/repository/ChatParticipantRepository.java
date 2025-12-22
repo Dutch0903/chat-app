@@ -18,7 +18,7 @@ public class ChatParticipantRepository {
         return chatParticipantDataSource.findAllByChatId(chatId.value()).stream().map(ChatParticipantData::toEntity).toList();
     }
 
-    public void save(ChatParticipant chatParticipant) {
+    public void insert(ChatParticipant chatParticipant) {
         chatParticipantDataSource.save(ChatParticipantData.from(chatParticipant, true));
     }
 }

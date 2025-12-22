@@ -49,5 +49,13 @@ public class ChatRepository {
 
         return result.map(ChatData::toEntity).orElse(null);
     }
+
+    public void insert(Chat chat) {
+        chatDataSource.save(ChatData.fromEntity(chat, true));
+    }
+
+    public void update(Chat chat) {
+        chatDataSource.save(ChatData.fromEntity(chat));
+    }
 }
 
