@@ -33,4 +33,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail canNotAddParticipantToDirectChatException(CanNotAddParticipantToDirectChatException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
+
+    @ExceptionHandler(ChatAlreadyExistsException.class)
+    public ProblemDetail handleChatAlreadyExistsException(ChatAlreadyExistsException exception) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
 }

@@ -4,6 +4,7 @@ import com.chat_app.dto.ChatDetailsDto;
 import com.chat_app.dto.ChatDto;
 import com.chat_app.entity.Chat;
 import com.chat_app.entity.ChatParticipant;
+import com.chat_app.exception.ChatAlreadyExistsException;
 import com.chat_app.exception.ChatNotFoundException;
 import com.chat_app.exception.ForbiddenException;
 import com.chat_app.factory.IdFactory;
@@ -46,6 +47,12 @@ public class ChatService {
     }
 
     public ChatDetailsDto startDirectChat(ParticipantId starter, ParticipantId participantId) {
+
+        System.out.println("Starter: "  + starter.value());
+        if (chatRepository.existsDirectChatBetweenParticipants(starter, participantId)) {
+            throw new ChatAlreadyExistsException();
+        }
+
         Chat newChat = new Chat(
                 IdFactory.generateId(ChatId::new),
                 ChatType.DIRECT

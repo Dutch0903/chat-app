@@ -50,6 +50,11 @@ public class ChatRepository {
         return result.map(ChatData::toEntity).orElse(null);
     }
 
+    public boolean existsDirectChatBetweenParticipants(ParticipantId participantA, ParticipantId participantB)
+    {
+        return chatDataSource.existsDirectChat(participantA.value(), participantB.value());
+    }
+
     public void insert(Chat chat) {
         chatDataSource.save(ChatData.fromEntity(chat, true));
     }
