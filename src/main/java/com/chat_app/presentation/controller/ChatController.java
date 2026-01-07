@@ -85,7 +85,7 @@ public class ChatController {
 
         List<ParticipantId> participantIds = new  ArrayList<>();
         participantIds.add(ParticipantId.from(userId.value()));
-        startGroupChatRequest.participants().stream().forEach(id -> {
+        startGroupChatRequest.participants().forEach(id -> {
             participantIds.add(ParticipantId.from(id));
         });
 
@@ -95,15 +95,5 @@ public class ChatController {
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(details);
-    }
-
-    @PostMapping("/chats/{chatId}/participants")
-    public ResponseEntity<?> addParticipant(
-            @PathVariable UUID chatId,
-            @Valid @RequestBody AddParticipantRequest addParticipantRequest
-    ) {
-        chatService.addParticipantToChat(ChatId.from(chatId), ParticipantId.from(addParticipantRequest.userId()));
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

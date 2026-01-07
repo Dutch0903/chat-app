@@ -1,25 +1,35 @@
 package com.chat_app.infrastructure.repository;
 
 import com.chat_app.domain.entity.Chat;
+import com.chat_app.domain.valueobjects.ChatId;
+import com.chat_app.domain.valueobjects.ParticipantId;
+import com.chat_app.infrastructure.mapper.ChatMapper;
+import com.chat_app.infrastructure.mapper.ChatParticipantMapper;
 import com.chat_app.infrastructure.repository.jdbc.ChatDataSource;
 import com.chat_app.infrastructure.repository.jdbc.ChatParticipantDataSource;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatData;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
-import com.chat_app.domain.valueobjects.ChatId;
-import com.chat_app.domain.valueobjects.ParticipantId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @Repository
 public class ChatRepository {
+    @Autowired
+    private ChatMapper chatMapper;
+
+    @Autowired
+    private ChatParticipantMapper chatParticipantMapper;
 
     @Autowired
     private ChatDataSource chatDataSource;
+
+    @Autowired
+    private ChatParticipantRepository chatParticipantRepository;
 
     @Autowired
     private ChatParticipantDataSource chatParticipantDataSource;
@@ -27,16 +37,18 @@ public class ChatRepository {
     public List<Chat> getAllChats(ParticipantId participantId) {
         List<ChatParticipantData> chatParticipantDataList = chatParticipantDataSource.findAllByParticipantId(participantId.value());
 
-        List<UUID> chatIdList = chatParticipantDataList.stream().map(ChatParticipantData::getChatId).toList();
+        List<UUID> chatIds = chatParticipantDataList.stream().map(ChatParticipantData::getChatId).toList();
+        List<ChatParticipantData> allParticipants = chatParticipantDataSource.findAllByChatIdIn(chatIds);
 
-        List<Chat> chats = new ArrayList<>();
-        chatDataSource.findAllById(chatIdList).forEach(chatData -> chats.add(chatData.toEntity()));
-
-        return chats;
-    }
-
-    public Chat getChatById(ChatId chatId) {
-        return chatDataSource.findById(chatId.value()).map(ChatData::toEntity).orElse(null);
+        return StreamSupport.stream(chatDataSource.findAllById(chatIds).spliterator(), false)
+                .map(chatData -> chatMapper.toEntity(
+                        chatData,
+                        allParticipants.stream()
+                                .filter(chatParticipantData -> chatParticipantData.getChatId().equals(chatData.getId()))
+                                .map(chatParticipantData -> chatParticipantMapper.toEntity(chatParticipantData))
+                                .toList()
+                ))
+                .toList();
     }
 
     public Chat findChatByIdAndParticipantId(ChatId chatId, ParticipantId participantId) {
@@ -47,20 +59,25 @@ public class ChatRepository {
 
         Optional<ChatData> result = chatDataSource.findById(chatId.value());
 
-        return result.map(ChatData::toEntity).orElse(null);
+        if (result.isEmpty()) {
+            return null;
+        }
+
+        ChatData chatData = result.get();
+
+        return chatMapper.toEntity(chatData, chatParticipantRepository.getAllChatParticipants(ChatId.from(chatData.getId())));
     }
 
-    public boolean existsDirectChatBetweenParticipants(ParticipantId participantA, ParticipantId participantB)
-    {
+    public boolean existsDirectChatBetweenParticipants(ParticipantId participantA, ParticipantId participantB) {
         return chatDataSource.existsDirectChat(participantA.value(), participantB.value());
     }
 
     public void insert(Chat chat) {
-        chatDataSource.save(ChatData.fromEntity(chat, true));
-    }
+        ChatData chatData = chatMapper.toData(chat, true);
 
-    public void update(Chat chat) {
-        chatDataSource.save(ChatData.fromEntity(chat));
+        chatDataSource.save(chatData);
+
+        chatParticipantRepository.saveAll(chat.getParticipants());
     }
 }
 

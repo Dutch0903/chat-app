@@ -14,28 +14,21 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.chat_app.testdata.ChatParticipantDataBuilder.aChatParticipantData;
-import static com.chat_app.testdata.ChatParticipantIdBuilder.aChatParticipantId;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ChatParticipantChangeDetectorTest {
-    @Mock
-    private ChatParticipantDataSource chatParticipantDataSource;
-
     @InjectMocks
     private ChatParticipantChangeDetector chatParticipantChangeDetector;
 
     @Test
     public void detectChanges_WithNoExistingChatParticipantsAndNoNewParticipants_ReturnsNoDeletionsAndNoAdditions() {
-        UUID chatId = UUID.randomUUID();
         List<ChatParticipantData> existingParticipants = new ArrayList<>();
         List<ChatParticipantData> newParticipants = new ArrayList<>();
 
-        when(chatParticipantDataSource.findAllByChatId(chatId)).thenReturn(existingParticipants);
-
-        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(chatId, newParticipants);
+        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(newParticipants, existingParticipants);
 
         assertFalse(result.hasDeletions());
         assertTrue(result.getDeletions().isEmpty());
@@ -48,11 +41,9 @@ public class ChatParticipantChangeDetectorTest {
     public void detectChanges_WithNoExistingChatParticipants_ReturnsNoDeletions() {
         UUID chatId = UUID.randomUUID();
         List<ChatParticipantData> existingParticipants = new ArrayList<>();
-        List<ChatParticipantData> newParticipants = Arrays.asList(aChatParticipantData().withChatParticipantId(aChatParticipantId().withChatId(chatId).build()).build(), aChatParticipantData().withChatParticipantId(aChatParticipantId().withChatId(chatId).build()).build());
+        List<ChatParticipantData> newParticipants = Arrays.asList(aChatParticipantData().withChatId(chatId).build(), aChatParticipantData().withChatId(chatId).build());
 
-        when(chatParticipantDataSource.findAllByChatId(chatId)).thenReturn(existingParticipants);
-
-        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(chatId, newParticipants);
+        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(newParticipants, existingParticipants);
 
         assertFalse(result.hasDeletions());
         assertTrue(result.getDeletions().isEmpty());
@@ -61,16 +52,14 @@ public class ChatParticipantChangeDetectorTest {
     @Test
     public void detectChanges_WithExistingChatParticipantsAndNoNewParticipants_ReturnsAllExistingAsDeletions() {
         UUID chatId = UUID.randomUUID();
-        ChatParticipantData existingParticipantData1 = aChatParticipantData().withChatParticipantId(aChatParticipantId().withChatId(chatId).build()).build();
-        ChatParticipantData existingParticipantData2 = aChatParticipantData().withChatParticipantId(aChatParticipantId().withChatId(chatId).build()).build();
+        ChatParticipantData existingParticipantData1 = aChatParticipantData().withChatId(chatId).build();
+        ChatParticipantData existingParticipantData2 = aChatParticipantData().withChatId(chatId).build();
 
         List<ChatParticipantData> existingParticipants = Arrays.asList(existingParticipantData1, existingParticipantData2);
 
         List<ChatParticipantData> newParticipants = new ArrayList<>();
 
-        when(chatParticipantDataSource.findAllByChatId(chatId)).thenReturn(existingParticipants);
-
-        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(chatId, newParticipants);
+        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(newParticipants, existingParticipants);
 
         assertTrue(result.hasDeletions());
         List<ChatParticipantData> deletedParticipants = result.getDeletions();
@@ -83,15 +72,13 @@ public class ChatParticipantChangeDetectorTest {
     @Test
     public void detectChanged_WithNoExistingChatParticipantsButWithNewParticipants_ReturnsAllNewAdditions() {
         UUID chatId = UUID.randomUUID();
-        ChatParticipantData newChatParticipantData1 = aChatParticipantData().withChatParticipantId(aChatParticipantId().build()).build();
-        ChatParticipantData newChatParticipantData2 = aChatParticipantData().withChatParticipantId(aChatParticipantId().build()).build();
+        ChatParticipantData newChatParticipantData1 = aChatParticipantData().build();
+        ChatParticipantData newChatParticipantData2 = aChatParticipantData().build();
 
         List<ChatParticipantData> existingParticipants = new ArrayList<>();
         List<ChatParticipantData> newParticipants = Arrays.asList(newChatParticipantData1, newChatParticipantData2);
 
-        when(chatParticipantDataSource.findAllByChatId(chatId)).thenReturn(existingParticipants);
-
-        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(chatId, newParticipants);
+        ChangeResult<ChatParticipantData> result = chatParticipantChangeDetector.detectChanges(newParticipants, existingParticipants);
 
         assertTrue(result.hasAdditions());
         List<ChatParticipantData> addedParticipants = result.getAdditions();

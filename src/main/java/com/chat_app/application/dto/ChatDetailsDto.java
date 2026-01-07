@@ -18,7 +18,7 @@ public record ChatDetailsDto(
         List<UUID> participants,
         Integer unreadCount
 ) {
-    public static ChatDetailsDto from(Chat chat, List<ChatParticipant> chatParticipants) {
+    public static ChatDetailsDto from(Chat chat) {
         return new ChatDetailsDto(
                 chat.getId().value(),
                 chat.getType().name(),
@@ -27,7 +27,7 @@ public record ChatDetailsDto(
                 chat.getUpdatedAt(),
                 OffsetDateTime.now(),
                 UUID.randomUUID(),
-                chatParticipants.stream().map(chatParticipant -> chatParticipant.getParticipantId().value()).toList(),
+                chat.getParticipants().stream().map(chatParticipant -> chatParticipant.getParticipantId().value()).toList(),
                 0
         );
     }

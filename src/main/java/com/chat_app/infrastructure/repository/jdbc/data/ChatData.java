@@ -5,15 +5,20 @@ import com.chat_app.domain.type.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Table("chats")
 public class ChatData implements Persistable<UUID> {
@@ -35,23 +40,6 @@ public class ChatData implements Persistable<UUID> {
                 chat.getCreatedAt(),
                 chat.getUpdatedAt(),
                 false
-        );
-    }
-
-    public static ChatData fromEntity(Chat chat, boolean isNew) {
-        ChatData data = ChatData.fromEntity(chat);
-        data.isNew = isNew;
-
-        return data;
-    }
-
-    public Chat toEntity() {
-        return new Chat(
-                new ChatId(this.id),
-                ChatType.valueOf(this.type),
-                this.name,
-                this.createdAt,
-                this.updatedAt
         );
     }
 }

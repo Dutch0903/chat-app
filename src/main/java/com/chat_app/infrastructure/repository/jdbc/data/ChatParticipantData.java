@@ -1,12 +1,9 @@
 package com.chat_app.infrastructure.repository.jdbc.data;
 
-import com.chat_app.domain.entity.ChatParticipant;
-import com.chat_app.infrastructure.repository.jdbc.data.id.ChatParticipantId;
 import com.chat_app.domain.type.ChatParticipantRole;
-import com.chat_app.domain.valueobjects.ChatId;
-import com.chat_app.domain.valueobjects.ParticipantId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
@@ -16,53 +13,44 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Table("chat_participants")
-public class ChatParticipantData implements Persistable<ChatParticipantId> {
-    @Id
-    private ChatParticipantId id;
+public class ChatParticipantData implements Persistable<UUID> {
 
+    @Id
+    private UUID id;
+    private UUID chatId;
+    private UUID participantId;
     private ChatParticipantRole role;
 
     @Transient
     private boolean isNew;
 
-    public static ChatParticipantData from(ChatParticipant chatParticipant) {
-        return new ChatParticipantData(
-                new ChatParticipantId(
-                        chatParticipant.getChatId().value(),
-                        chatParticipant.getParticipantId().value()
-                ),
-                chatParticipant.getChatRole(),
-                false
-        );
-    }
-
-    public static ChatParticipantData from(ChatParticipant chatParticipant, boolean isNew) {
-        ChatParticipantData data = ChatParticipantData.from(chatParticipant);
-
-        data.isNew = isNew;
-
-        return data;
-    }
-
-    public ChatParticipant toEntity() {
-        return new ChatParticipant(
-                new ChatId(id.participantId()),
-                new ParticipantId(id.chatId()),
-                role
-        );
-    }
-
-    public UUID getChatId() {
-        return id.chatId();
-    }
-
-    public UUID getParticipantId() {
-        return id.participantId();
+    public ChatParticipantData(
+            UUID id,
+            UUID chatId,
+            UUID participantId,
+            ChatParticipantRole role
+    ) {
+        this.id = id;
+        this.chatId = chatId;
+        this.participantId = participantId;
+        this.role = role;
+        this.isNew = false;
     }
 
     @Override
     public boolean isNew() {
         return isNew;
+    }
+
+    public ChatParticipantData setId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
+    public ChatParticipantData setIsNew(boolean isNew) {
+        this.isNew = isNew;
+        return this;
     }
 }

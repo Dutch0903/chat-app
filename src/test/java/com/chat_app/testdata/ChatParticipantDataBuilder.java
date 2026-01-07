@@ -2,12 +2,12 @@ package com.chat_app.testdata;
 
 import com.chat_app.domain.type.ChatParticipantRole;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
-import com.chat_app.infrastructure.repository.jdbc.data.id.ChatParticipantId;
 
-import static com.chat_app.testdata.ChatParticipantIdBuilder.aChatParticipantId;
+import java.util.UUID;
 
 public class ChatParticipantDataBuilder {
-    private ChatParticipantId chatParticipantId = aChatParticipantId().build();
+    private UUID chatId = UUID.randomUUID();
+    private UUID participantId = UUID.randomUUID();
     private ChatParticipantRole role = ChatParticipantRole.MEMBER;
     private boolean isNew = false;
 
@@ -15,8 +15,13 @@ public class ChatParticipantDataBuilder {
         return new ChatParticipantDataBuilder();
     }
 
-    public ChatParticipantDataBuilder withChatParticipantId(ChatParticipantId chatParticipantId) {
-        this.chatParticipantId = chatParticipantId;
+    public ChatParticipantDataBuilder withChatId(UUID chatId) {
+        this.chatId = chatId;
+        return this;
+    }
+
+    public ChatParticipantDataBuilder withParticipantId(UUID participantId) {
+        this.participantId = participantId;
         return this;
     }
 
@@ -31,6 +36,12 @@ public class ChatParticipantDataBuilder {
     }
 
     public ChatParticipantData build() {
-        return new ChatParticipantData(chatParticipantId, role, isNew);
+        return new ChatParticipantData(
+                UUID.randomUUID(),
+                chatId,
+                participantId,
+                role,
+                isNew
+        );
     }
 }

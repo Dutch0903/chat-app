@@ -5,28 +5,24 @@ import com.chat_app.application.dto.ChatDto;
 import com.chat_app.domain.entity.Chat;
 import com.chat_app.domain.entity.ChatParticipant;
 import com.chat_app.domain.exception.ChatAlreadyExistsException;
-import com.chat_app.domain.exception.ChatNotFoundException;
 import com.chat_app.domain.exception.ForbiddenException;
 import com.chat_app.domain.factory.IdFactory;
-import com.chat_app.infrastructure.repository.ChatParticipantRepository;
-import com.chat_app.infrastructure.repository.ChatRepository;
 import com.chat_app.domain.type.ChatParticipantRole;
 import com.chat_app.domain.type.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
+import com.chat_app.infrastructure.repository.ChatParticipantRepository;
+import com.chat_app.infrastructure.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class ChatService {
     @Autowired
     private ChatRepository chatRepository;
-
-    @Autowired
-    private ChatParticipantRepository chatParticipantRepository;
 
     public List<ChatDto> getAllChats(ParticipantId participantId) {
         List<Chat> chats = this.chatRepository.getAllChats(participantId);
@@ -41,67 +37,45 @@ public class ChatService {
             throw new ForbiddenException("No chat was found for chat id " + chatId.value() + " and participant id " + participantId.value());
         }
 
-        List<ChatParticipant> participants = chatParticipantRepository.getAllChatParticipants(chatId);
-
-        return ChatDetailsDto.from(chat, participants);
+        return ChatDetailsDto.from(chat);
     }
 
     public ChatDetailsDto startDirectChat(ParticipantId starter, ParticipantId participantId) {
-
-        System.out.println("Starter: "  + starter.value());
         if (chatRepository.existsDirectChatBetweenParticipants(starter, participantId)) {
             throw new ChatAlreadyExistsException();
         }
+        ChatId chatId = IdFactory.generateId(ChatId::new);
 
         Chat newChat = new Chat(
-                IdFactory.generateId(ChatId::new),
-                ChatType.DIRECT
+                chatId,
+                ChatType.DIRECT,
+                Arrays.asList(
+                        new ChatParticipant(chatId, starter, ChatParticipantRole.MEMBER),
+                        new ChatParticipant(chatId, participantId, ChatParticipantRole.MEMBER)
+                ),
+                null
         );
 
         chatRepository.insert(newChat);
 
-        List<ChatParticipant> participants = new ArrayList<>();
-
-        participants.add(addParticipantToChat(newChat, starter));
-        participants.add(addParticipantToChat(newChat, participantId));
-
-        return ChatDetailsDto.from(newChat, participants);
+        return ChatDetailsDto.from(newChat);
     }
 
     public ChatDetailsDto startGroupChat(String name, List<ParticipantId> participantIds) {
+        ChatId chatId = IdFactory.generateId(ChatId::new);
+
+
         Chat newChat = new Chat(
-                IdFactory.generateId(ChatId::new),
+                chatId,
                 ChatType.GROUP,
+                participantIds.stream()
+                        .map(participantId -> new ChatParticipant(chatId, participantId, ChatParticipantRole.MEMBER))
+                        .toList(),
                 name
         );
 
         chatRepository.insert(newChat);
 
-        List<ChatParticipant> participants = new ArrayList<>();
-        participantIds.forEach(participantId -> participants.add(addParticipantToChat(newChat, participantId)));
-
-        return ChatDetailsDto.from(newChat, participants);
-    }
-
-    public ChatParticipant addParticipantToChat(Chat chat, ParticipantId participantId) {
-        ChatParticipant chatParticipant = new ChatParticipant(
-                chat.getId(),
-                participantId,
-                ChatParticipantRole.MEMBER
-        );
-
-        chatParticipantRepository.insert(chatParticipant);
-
-        return chatParticipant;
-    }
-
-    public ChatParticipant addParticipantToChat(ChatId chatId, ParticipantId participantId) {
-        Chat chat = chatRepository.getChatById(chatId);
-
-        if (chat == null) {
-            throw new ChatNotFoundException();
-        }
-
-        return addParticipantToChat(chat, participantId);
+        return ChatDetailsDto.from(newChat);
     }
 }
