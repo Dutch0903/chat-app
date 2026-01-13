@@ -2,6 +2,7 @@ package com.chat_app.infrastructure.repository;
 
 import com.chat_app.domain.entity.ChatParticipant;
 import com.chat_app.domain.valueobjects.ChatId;
+import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.infrastructure.mapper.ChatParticipantMapper;
 import com.chat_app.infrastructure.repository.jdbc.ChatParticipantDataSource;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
@@ -24,11 +25,26 @@ public class ChatParticipantRepository {
     @Autowired
     private ChatParticipantChangeDetector chatParticipantChangeDetector;
 
+    public boolean existsByChatIdAndParticipantId(ChatId chatId, ParticipantId participantId) {
+        return chatParticipantDataSource.existsByChatIdAndParticipantId(chatId.value(), participantId.value());
+    }
+
     public List<ChatParticipant> getAllChatParticipants(ChatId chatId) {
         return chatParticipantDataSource.findAllByChatId(chatId.value())
                 .stream()
                 .map(chatParticipantData -> chatParticipantMapper.toEntity(chatParticipantData))
                 .toList();
+    }
+
+    public List<ChatParticipant> getAllChatParticipants(List<UUID> chatIds) {
+        return chatParticipantDataSource.findAllByChatIdIn(chatIds)
+                .stream()
+                .map(chatParticipantMapper::toEntity)
+                .toList();
+    }
+
+    public List<ChatParticipantData> getAllParticipatingChats(ParticipantId participantId) {
+        return chatParticipantDataSource.findAllByParticipantId(participantId.value());
     }
 
     public void saveAll(List<ChatParticipant> chatParticipants) {

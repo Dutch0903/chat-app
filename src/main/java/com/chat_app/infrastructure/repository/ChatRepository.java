@@ -1,17 +1,19 @@
 package com.chat_app.infrastructure.repository;
 
 import com.chat_app.domain.entity.Chat;
+import com.chat_app.domain.entity.ChatParticipant;
+import com.chat_app.domain.exception.ChatCreationException;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.infrastructure.mapper.ChatMapper;
-import com.chat_app.infrastructure.mapper.ChatParticipantMapper;
 import com.chat_app.infrastructure.repository.jdbc.ChatDataSource;
-import com.chat_app.infrastructure.repository.jdbc.ChatParticipantDataSource;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatData;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,37 +25,33 @@ public class ChatRepository {
     private ChatMapper chatMapper;
 
     @Autowired
-    private ChatParticipantMapper chatParticipantMapper;
-
-    @Autowired
     private ChatDataSource chatDataSource;
 
     @Autowired
     private ChatParticipantRepository chatParticipantRepository;
 
-    @Autowired
-    private ChatParticipantDataSource chatParticipantDataSource;
-
     public List<Chat> getAllChats(ParticipantId participantId) {
-        List<ChatParticipantData> chatParticipantDataList = chatParticipantDataSource.findAllByParticipantId(participantId.value());
+        List<ChatParticipantData> chatParticipants = chatParticipantRepository.getAllParticipatingChats(participantId);
 
-        List<UUID> chatIds = chatParticipantDataList.stream().map(ChatParticipantData::getChatId).toList();
-        List<ChatParticipantData> allParticipants = chatParticipantDataSource.findAllByChatIdIn(chatIds);
+        if (chatParticipants.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<UUID> chatIds = chatParticipants.stream().map(ChatParticipantData::getChatId).toList();
+        List<ChatParticipant> allParticipants = chatParticipantRepository.getAllChatParticipants(chatIds);
 
         return StreamSupport.stream(chatDataSource.findAllById(chatIds).spliterator(), false)
                 .map(chatData -> chatMapper.toEntity(
                         chatData,
                         allParticipants.stream()
-                                .filter(chatParticipantData -> chatParticipantData.getChatId().equals(chatData.getId()))
-                                .map(chatParticipantData -> chatParticipantMapper.toEntity(chatParticipantData))
+                                .filter(chatParticipant -> chatParticipant.getChatId().value().equals(chatData.getId()))
                                 .toList()
                 ))
                 .toList();
     }
 
     public Chat findChatByIdAndParticipantId(ChatId chatId, ParticipantId participantId) {
-        boolean isParticipant = chatParticipantDataSource.existsByChatIdAndParticipantId(chatId.value(), participantId.value());
-        if (!isParticipant) {
+        if (!chatParticipantRepository.existsByChatIdAndParticipantId(chatId, participantId)) {
             return null;
         }
 
@@ -68,16 +66,23 @@ public class ChatRepository {
         return chatMapper.toEntity(chatData, chatParticipantRepository.getAllChatParticipants(ChatId.from(chatData.getId())));
     }
 
-    public boolean existsDirectChatBetweenParticipants(ParticipantId participantA, ParticipantId participantB) {
-        return chatDataSource.existsDirectChat(participantA.value(), participantB.value());
+    public boolean existsPrivateChatBetweenParticipants(ParticipantId participantA, ParticipantId participantB) {
+        return chatDataSource.existsPrivateChat(participantA.value(), participantB.value());
     }
 
     public void insert(Chat chat) {
         ChatData chatData = chatMapper.toData(chat, true);
 
-        chatDataSource.save(chatData);
+        try {
+            chatDataSource.save(chatData);
 
-        chatParticipantRepository.saveAll(chat.getParticipants());
+            chatParticipantRepository.saveAll(chat.getParticipants());
+        } catch (DataIntegrityViolationException e) {
+            throw new ChatCreationException(
+                    "Unable to create chat with id " + chat.getId().value() + ". The chat may already exist or there was a data integrity issue.",
+                    e
+            );
+        }
     }
 }
 

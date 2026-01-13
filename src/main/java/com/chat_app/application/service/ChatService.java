@@ -7,11 +7,10 @@ import com.chat_app.domain.entity.ChatParticipant;
 import com.chat_app.domain.exception.ChatAlreadyExistsException;
 import com.chat_app.domain.exception.ForbiddenException;
 import com.chat_app.domain.factory.IdFactory;
-import com.chat_app.domain.type.ChatParticipantRole;
+import com.chat_app.domain.type.ParticipantRole;
 import com.chat_app.domain.type.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
-import com.chat_app.infrastructure.repository.ChatParticipantRepository;
 import com.chat_app.infrastructure.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,20 +39,20 @@ public class ChatService {
         return ChatDetailsDto.from(chat);
     }
 
-    public ChatDetailsDto startDirectChat(ParticipantId starter, ParticipantId participantId) {
-        if (chatRepository.existsDirectChatBetweenParticipants(starter, participantId)) {
+    public ChatDetailsDto startPrivateChat(ParticipantId starter, ParticipantId participantId) {
+        if (chatRepository.existsPrivateChatBetweenParticipants(starter, participantId)) {
             throw new ChatAlreadyExistsException();
         }
         ChatId chatId = IdFactory.generateId(ChatId::new);
 
         Chat newChat = new Chat(
                 chatId,
-                ChatType.DIRECT,
+                ChatType.PRIVATE,
+                null,
                 Arrays.asList(
-                        new ChatParticipant(chatId, starter, ChatParticipantRole.MEMBER),
-                        new ChatParticipant(chatId, participantId, ChatParticipantRole.MEMBER)
-                ),
-                null
+                        new ChatParticipant(chatId, starter, ParticipantRole.MEMBER),
+                        new ChatParticipant(chatId, participantId, ParticipantRole.MEMBER)
+                )
         );
 
         chatRepository.insert(newChat);
@@ -68,10 +67,10 @@ public class ChatService {
         Chat newChat = new Chat(
                 chatId,
                 ChatType.GROUP,
+                name,
                 participantIds.stream()
-                        .map(participantId -> new ChatParticipant(chatId, participantId, ChatParticipantRole.MEMBER))
-                        .toList(),
-                name
+                        .map(participantId -> new ChatParticipant(chatId, participantId, ParticipantRole.MEMBER))
+                        .toList()
         );
 
         chatRepository.insert(newChat);

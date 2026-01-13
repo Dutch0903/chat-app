@@ -16,8 +16,10 @@ public class ChatMapper {
         return new Chat(
                 ChatId.from(chatData.getId()),
                 ChatType.valueOf(chatData.getType()),
+                chatData.getName(),
                 chatParticipants,
-                chatData.getName()
+                chatData.getCreatedAt(),
+                chatData.getUpdatedAt()
         );
     }
 

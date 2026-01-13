@@ -1,6 +1,6 @@
 package com.chat_app.domain.type;
 
-public enum ChatParticipantRole {
+public enum ParticipantRole {
     ADMIN,
     MODERATOR,
     MEMBER

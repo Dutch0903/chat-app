@@ -1,6 +1,6 @@
 package com.chat_app.testdata;
 
-import com.chat_app.domain.type.ChatParticipantRole;
+import com.chat_app.domain.type.ParticipantRole;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
 
 import java.util.UUID;
@@ -8,7 +8,7 @@ import java.util.UUID;
 public class ChatParticipantDataBuilder {
     private UUID chatId = UUID.randomUUID();
     private UUID participantId = UUID.randomUUID();
-    private ChatParticipantRole role = ChatParticipantRole.MEMBER;
+    private ParticipantRole role = ParticipantRole.MEMBER;
     private boolean isNew = false;
 
     public static ChatParticipantDataBuilder aChatParticipantData() {
@@ -25,7 +25,7 @@ public class ChatParticipantDataBuilder {
         return this;
     }
 
-    public ChatParticipantDataBuilder withRole(ChatParticipantRole role) {
+    public ChatParticipantDataBuilder withRole(ParticipantRole role) {
         this.role = role;
         return this;
     }

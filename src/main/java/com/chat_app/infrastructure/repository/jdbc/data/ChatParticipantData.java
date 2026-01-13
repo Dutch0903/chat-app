@@ -1,6 +1,6 @@
 package com.chat_app.infrastructure.repository.jdbc.data;
 
-import com.chat_app.domain.type.ChatParticipantRole;
+import com.chat_app.domain.type.ParticipantRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class ChatParticipantData implements Persistable<UUID> {
     private UUID id;
     private UUID chatId;
     private UUID participantId;
-    private ChatParticipantRole role;
+    private ParticipantRole role;
 
     @Transient
     private boolean isNew;
@@ -30,7 +30,7 @@ public class ChatParticipantData implements Persistable<UUID> {
             UUID id,
             UUID chatId,
             UUID participantId,
-            ChatParticipantRole role
+            ParticipantRole role
     ) {
         this.id = id;
         this.chatId = chatId;

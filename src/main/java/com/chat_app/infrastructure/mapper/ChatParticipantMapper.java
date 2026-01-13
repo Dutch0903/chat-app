@@ -14,7 +14,7 @@ public class ChatParticipantMapper {
                 null,
                 chatParticipant.getChatId().value(),
                 chatParticipant.getParticipantId().value(),
-                chatParticipant.getChatRole()
+                chatParticipant.getParticipantRole()
         );
     }
 

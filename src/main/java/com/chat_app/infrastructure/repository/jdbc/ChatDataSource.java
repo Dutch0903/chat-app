@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface ChatDataSource extends CrudRepository<ChatData, UUID> {
 
     @Query("SELECT EXISTS ( SELECT 1 FROM chats c JOIN chat_participants cp ON c.id = cp.chat_id WHERE c.type = 'DIRECT' AND cp.participant_id IN (:participantIdA, :participantIdB) GROUP BY c.id HAVING COUNT(DISTINCT cp.participant_id) = 2)")
-    boolean existsDirectChat(UUID participantIdA, UUID participantIdB);
+    boolean existsPrivateChat(UUID participantIdA, UUID participantIdB);
 }

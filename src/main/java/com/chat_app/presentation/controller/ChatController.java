@@ -3,14 +3,13 @@ package com.chat_app.presentation.controller;
 import com.chat_app.application.dto.ChatDetailsDto;
 import com.chat_app.application.dto.ChatDto;
 import com.chat_app.domain.entity.Message;
-import com.chat_app.presentation.request.AddParticipantRequest;
-import com.chat_app.presentation.request.StartDirectChatRequest;
 import com.chat_app.presentation.request.StartGroupChatRequest;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.application.service.ChatService;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.domain.valueobjects.UserId;
+import com.chat_app.presentation.request.StartPrivateChatRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,16 +60,16 @@ public class ChatController {
         return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
-    @PostMapping("/chats/direct")
-    public ResponseEntity<?> startDirectChat(
+    @PostMapping("/chats/private")
+    public ResponseEntity<?> startPrivateChat(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid @RequestBody StartDirectChatRequest startDirectChatRequest
+            @Valid @RequestBody StartPrivateChatRequest startPrivateChatRequest
     ) {
         UserId userId = userDetails.getId();
 
-        ChatDetailsDto details = chatService.startDirectChat(
+        ChatDetailsDto details = chatService.startPrivateChat(
                 ParticipantId.from(userId.value()),
-                ParticipantId.from(startDirectChatRequest.participantId())
+                ParticipantId.from(startPrivateChatRequest.participantId())
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(details);

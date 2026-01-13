@@ -20,7 +20,7 @@ public class Chat {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
-    public Chat(ChatId id, ChatType type, List<ChatParticipant> participants, String name) {
+    public Chat(ChatId id, ChatType type, String name, List<ChatParticipant> participants) {
         this.id = id;
         this.type = type;
         this.participants = participants;
