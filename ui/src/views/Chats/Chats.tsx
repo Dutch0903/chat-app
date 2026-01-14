@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useWebSocketClient } from "../../hooks/use-websocket";
+import { useWebSocketClient } from "../../hooks/webhook/use-websocket";
 import { Events } from "../../socket/Events";
 import type { MessageEvent } from "../../socket/events/MessageEvent";
 

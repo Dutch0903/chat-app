@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/use-auth";
-import { WebSocketClientProvider } from "../hooks/use-websocket";
+import { useAuth } from "../hooks/auth/use-auth.ts";
+import { WebSocketClientProvider } from "../hooks/webhook/web-socket-client-provider.tsx";
 import Layout from "./Layout";
 
 export const PrivateRoute: FC = () => {

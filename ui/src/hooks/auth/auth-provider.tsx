@@ -1,26 +1,7 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-import { apiFetch } from "../api";
-import type { User } from "../types/user";
-
-type AuthContextType = {
-  user: User | null;
-  login: (username: string, password: string) => Promise<void>;
-  register: (
-    email: string,
-    password: string,
-    username: string,
-  ) => Promise<void>;
-  logout: () => Promise<void>;
-  isLoading: boolean;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { useEffect, useState, type ReactNode } from "react";
+import { apiFetch } from "../../api";
+import type { User } from "../../types/user";
+import { AuthContext } from "./auth-context";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -81,12 +62,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 }

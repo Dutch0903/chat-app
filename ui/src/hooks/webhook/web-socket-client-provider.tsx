@@ -1,21 +1,7 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type FC,
-} from "react";
-import SocketClient from "../socket/SocketClient";
-import { useAuth } from "./use-auth";
-
-type WebSocketClientContextType = {
-  socketClient: SocketClient | undefined;
-};
-
-const WebSocketClientContext = createContext<
-  WebSocketClientContextType | undefined
->(undefined);
+import { useEffect, useRef, useState, type FC } from "react";
+import SocketClient from "../../socket/SocketClient.ts";
+import { useAuth } from "../auth/use-auth.ts";
+import { WebSocketClientContext } from "./web-socket-client-context.ts";
 
 export const WebSocketClientProvider: FC<{ children: React.ReactNode }> = ({
   children,
@@ -45,20 +31,11 @@ export const WebSocketClientProvider: FC<{ children: React.ReactNode }> = ({
         socketClient.deactivate();
       }
     };
-  }, [user]);
+  }, [user, isLoading, socketClient]);
 
   return (
     <WebSocketClientContext.Provider value={{ socketClient }}>
       {socketClient ? children : <div>Connection...</div>}
     </WebSocketClientContext.Provider>
   );
-};
-
-export const useWebSocketClient = () => {
-  const context = useContext(WebSocketClientContext);
-  if (context === undefined) {
-    throw new Error("useWebSocketClient must be used with an ");
-  }
-
-  return context;
 };

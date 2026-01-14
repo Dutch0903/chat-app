@@ -2,7 +2,7 @@ import { Button, TextField } from "@mui/material";
 import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import z, { ZodError } from "zod";
-import { useAuth } from "../../../hooks/use-auth";
+import { useAuth } from "../../../hooks/auth/use-auth.ts";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
