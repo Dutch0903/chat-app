@@ -1,5 +1,9 @@
 package com.chat_app.domain.entity;
 
+import com.chat_app.domain.exception.CannotAddParticipantToPrivateChatException;
+import com.chat_app.domain.exception.CannotRemoveParticipantFromPrivateChatException;
+import com.chat_app.domain.exception.ChatParticipantLimitExceededException;
+import com.chat_app.domain.exception.ParticipantAlreadyInChatException;
 import com.chat_app.domain.type.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
 import lombok.AllArgsConstructor;
@@ -15,12 +19,14 @@ public class Chat {
     private ChatType type;
     private String name;
 
-    private List<ChatParticipant> participants;
+    private List<Participant> participants;
 
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
-    public Chat(ChatId id, ChatType type, String name, List<ChatParticipant> participants) {
+    private static final Integer MAX_PARTICIPANTS_NUMBER = 10;
+
+    public Chat(ChatId id, ChatType type, String name, List<Participant> participants) {
         this.id = id;
         this.type = type;
         this.participants = participants;
@@ -28,5 +34,29 @@ public class Chat {
 
         this.createdAt = OffsetDateTime.now();
         this.updatedAt = OffsetDateTime.now();
+    }
+
+    public void addParticipant(Participant participant) {
+        if (type.equals(ChatType.PRIVATE)) {
+            throw new CannotAddParticipantToPrivateChatException();
+        }
+
+        if (participants.contains(participant)) {
+            throw new ParticipantAlreadyInChatException();
+        }
+
+        if (participants.size() + 1 >= MAX_PARTICIPANTS_NUMBER) {
+            throw new ChatParticipantLimitExceededException();
+        }
+
+        participants.add(participant);
+    }
+
+    public void removeParticipant(Participant participant) {
+        if (type.equals(ChatType.PRIVATE)) {
+            throw new CannotRemoveParticipantFromPrivateChatException();
+        }
+
+        participants.remove(participant);
     }
 }

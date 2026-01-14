@@ -1,7 +1,6 @@
 package com.chat_app.application.dto;
 
 import com.chat_app.domain.entity.Chat;
-import com.chat_app.domain.entity.ChatParticipant;
 
 import java.time.OffsetDateTime;
 import java.util.List;

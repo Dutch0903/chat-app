@@ -1,14 +1,14 @@
 package com.chat_app.infrastructure.repository;
 
 import com.chat_app.domain.entity.Chat;
-import com.chat_app.domain.entity.ChatParticipant;
+import com.chat_app.domain.entity.Participant;
 import com.chat_app.domain.exception.ChatCreationException;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.infrastructure.mapper.ChatMapper;
 import com.chat_app.infrastructure.repository.jdbc.ChatDataSource;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatData;
-import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
+import com.chat_app.infrastructure.repository.jdbc.data.ParticipantData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -28,17 +28,17 @@ public class ChatRepository {
     private ChatDataSource chatDataSource;
 
     @Autowired
-    private ChatParticipantRepository chatParticipantRepository;
+    private ParticipantRepository participantRepository;
 
     public List<Chat> getAllChats(ParticipantId participantId) {
-        List<ChatParticipantData> chatParticipants = chatParticipantRepository.getAllParticipatingChats(participantId);
+        List<ParticipantData> chatParticipants = participantRepository.getAllParticipatingChats(participantId);
 
         if (chatParticipants.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<UUID> chatIds = chatParticipants.stream().map(ChatParticipantData::getChatId).toList();
-        List<ChatParticipant> allParticipants = chatParticipantRepository.getAllChatParticipants(chatIds);
+        List<UUID> chatIds = chatParticipants.stream().map(ParticipantData::getChatId).toList();
+        List<Participant> allParticipants = participantRepository.getAllChatParticipants(chatIds);
 
         return StreamSupport.stream(chatDataSource.findAllById(chatIds).spliterator(), false)
                 .map(chatData -> chatMapper.toEntity(
@@ -51,7 +51,7 @@ public class ChatRepository {
     }
 
     public Chat findChatByIdAndParticipantId(ChatId chatId, ParticipantId participantId) {
-        if (!chatParticipantRepository.existsByChatIdAndParticipantId(chatId, participantId)) {
+        if (!participantRepository.existsByChatIdAndParticipantId(chatId, participantId)) {
             return null;
         }
 
@@ -63,7 +63,7 @@ public class ChatRepository {
 
         ChatData chatData = result.get();
 
-        return chatMapper.toEntity(chatData, chatParticipantRepository.getAllChatParticipants(ChatId.from(chatData.getId())));
+        return chatMapper.toEntity(chatData, participantRepository.getAllChatParticipants(ChatId.from(chatData.getId())));
     }
 
     public boolean existsPrivateChatBetweenParticipants(ParticipantId participantA, ParticipantId participantB) {
@@ -76,7 +76,7 @@ public class ChatRepository {
         try {
             chatDataSource.save(chatData);
 
-            chatParticipantRepository.saveAll(chat.getParticipants());
+            participantRepository.saveAll(chat.getParticipants());
         } catch (DataIntegrityViolationException e) {
             throw new ChatCreationException(
                     "Unable to create chat with id " + chat.getId().value() + ". The chat may already exist or there was a data integrity issue.",

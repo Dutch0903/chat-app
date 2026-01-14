@@ -29,8 +29,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "Access denied");
     }
 
-    @ExceptionHandler(CanNotAddParticipantToDirectChatException.class)
-    public ProblemDetail canNotAddParticipantToDirectChatException(CanNotAddParticipantToDirectChatException exception) {
+    @ExceptionHandler(CannotAddParticipantToPrivateChatException.class)
+    public ProblemDetail canNotAddParticipantToDirectChatException(CannotAddParticipantToPrivateChatException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 

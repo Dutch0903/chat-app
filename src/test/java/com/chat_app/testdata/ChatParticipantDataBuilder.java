@@ -1,7 +1,7 @@
 package com.chat_app.testdata;
 
 import com.chat_app.domain.type.ParticipantRole;
-import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
+import com.chat_app.infrastructure.repository.jdbc.data.ParticipantData;
 
 import java.util.UUID;
 
@@ -35,8 +35,8 @@ public class ChatParticipantDataBuilder {
         return this;
     }
 
-    public ChatParticipantData build() {
-        return new ChatParticipantData(
+    public ParticipantData build() {
+        return new ParticipantData(
                 UUID.randomUUID(),
                 chatId,
                 participantId,

@@ -1,21 +1,20 @@
 package com.chat_app.domain.entity;
 
-import com.chat_app.domain.type.MessageType;
+import com.chat_app.domain.valueobjects.ChatId;
+import com.chat_app.domain.valueobjects.MessageId;
+import com.chat_app.domain.valueobjects.ParticipantId;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-import java.util.UUID;
+import java.time.OffsetDateTime;
 
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class Message {
-    private UUID id;
-
-    private String username;
+    private MessageId id;
+    private ChatId chatId;
+    private ParticipantId senderId;
     private String content;
-    private MessageType type;
+
+    private OffsetDateTime createdAt;
 }

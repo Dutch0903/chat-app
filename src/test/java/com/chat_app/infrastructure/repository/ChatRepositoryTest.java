@@ -1,7 +1,7 @@
 package com.chat_app.infrastructure.repository;
 
 import com.chat_app.domain.entity.Chat;
-import com.chat_app.domain.entity.ChatParticipant;
+import com.chat_app.domain.entity.Participant;
 import com.chat_app.domain.exception.ChatCreationException;
 import com.chat_app.domain.type.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
@@ -9,7 +9,7 @@ import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.infrastructure.mapper.ChatMapper;
 import com.chat_app.infrastructure.repository.jdbc.ChatDataSource;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatData;
-import com.chat_app.infrastructure.repository.jdbc.data.ChatParticipantData;
+import com.chat_app.infrastructure.repository.jdbc.data.ParticipantData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import static com.chat_app.testdata.ChatBuilder.aChat;
 import static com.chat_app.testdata.ChatDataBuilder.aChatData;
 import static com.chat_app.testdata.ChatIdBuilder.aChatId;
-import static com.chat_app.testdata.ChatParticipantBuilder.aChatParticipant;
+import static com.chat_app.testdata.ParticipantBuilder.aParticipant;
 import static com.chat_app.testdata.ChatParticipantDataBuilder.aChatParticipantData;
 import static com.chat_app.testdata.ParticipantIdBuilder.aParticipantId;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +40,7 @@ public class ChatRepositoryTest {
     private ChatMapper chatMapper;
 
     @Mock
-    private ChatParticipantRepository chatParticipantRepository;
+    private ParticipantRepository participantRepository;
 
     @Mock
     private ChatDataSource chatDataSource;
@@ -55,22 +55,22 @@ public class ChatRepositoryTest {
         ChatId chatId1 = aChatId().build();
         ChatId chatId2 = aChatId().build();
 
-        ChatParticipantData chatParticipantData1 = aChatParticipantData().withChatId(chatId1.value()).withParticipantId(participantId.value()).build();
-        ChatParticipantData chatParticipantData2 = aChatParticipantData().withChatId(chatId2.value()).withParticipantId(participantId.value()).build();
+        ParticipantData participantData1 = aChatParticipantData().withChatId(chatId1.value()).withParticipantId(participantId.value()).build();
+        ParticipantData participantData2 = aChatParticipantData().withChatId(chatId2.value()).withParticipantId(participantId.value()).build();
 
-        ChatParticipant chatParticipant1 = aChatParticipant().withChatId(chatId1).withParticipantId(participantId).build();
-        ChatParticipant chatParticipant2 = aChatParticipant().withChatId(chatId2).withParticipantId(participantId).build();
+        Participant participant1 = aParticipant().withChatId(chatId1).withParticipantId(participantId).build();
+        Participant participant2 = aParticipant().withChatId(chatId2).withParticipantId(participantId).build();
 
         ChatData chatData1 = aChatData().withId(chatId1.value()).build();
         ChatData chatData2 = aChatData().withId(chatId2.value()).build();
 
-        Chat chat1 = aChat().withChatId(chatId1).withParticipants(Collections.singletonList(chatParticipant1)).build();
-        Chat chat2 = aChat().withChatId(chatId2).withParticipants(Collections.singletonList(chatParticipant2)).build();
+        Chat chat1 = aChat().withChatId(chatId1).withParticipants(Collections.singletonList(participant1)).build();
+        Chat chat2 = aChat().withChatId(chatId2).withParticipants(Collections.singletonList(participant2)).build();
 
-        when(chatParticipantRepository.getAllParticipatingChats(participantId)).thenReturn(Arrays.asList(chatParticipantData1, chatParticipantData2));
+        when(participantRepository.getAllParticipatingChats(participantId)).thenReturn(Arrays.asList(participantData1, participantData2));
 
-        when(chatParticipantRepository.getAllChatParticipants(Arrays.asList(chatId1.value(), chatId2.value()))).thenReturn(
-                Arrays.asList(chatParticipant1, chatParticipant2)
+        when(participantRepository.getAllChatParticipants(Arrays.asList(chatId1.value(), chatId2.value()))).thenReturn(
+                Arrays.asList(participant1, participant2)
         );
 
         when(chatDataSource.findAllById(Arrays.asList(chatId1.value(), chatId2.value())))
@@ -90,7 +90,7 @@ public class ChatRepositoryTest {
     public void getAllChats_ParticipantHasNoChats_ReturnsEmptyList() {
         ParticipantId participantId = aParticipantId().build();
 
-        when(chatParticipantRepository.getAllParticipatingChats(participantId)).thenReturn(Collections.emptyList());
+        when(participantRepository.getAllParticipatingChats(participantId)).thenReturn(Collections.emptyList());
 
         List<Chat> chats = chatRepository.getAllChats(participantId);
 
@@ -102,7 +102,7 @@ public class ChatRepositoryTest {
         ChatId chatId = aChatId().build();
         ParticipantId participantId = aParticipantId().build();
 
-        when(chatParticipantRepository.existsByChatIdAndParticipantId(chatId, participantId)).thenReturn(Boolean.FALSE);
+        when(participantRepository.existsByChatIdAndParticipantId(chatId, participantId)).thenReturn(Boolean.FALSE);
 
         assertNull(chatRepository.findChatByIdAndParticipantId(chatId, participantId));
     }
@@ -112,7 +112,7 @@ public class ChatRepositoryTest {
         ParticipantId participantId = aParticipantId().build();
         ChatId chatId = aChatId().build();
 
-        when(chatParticipantRepository.existsByChatIdAndParticipantId(chatId, participantId)).thenReturn(Boolean.TRUE);
+        when(participantRepository.existsByChatIdAndParticipantId(chatId, participantId)).thenReturn(Boolean.TRUE);
 
         when(chatDataSource.findById(chatId.value())).thenReturn(Optional.empty());
 
@@ -125,14 +125,14 @@ public class ChatRepositoryTest {
         ChatId chatId = aChatId().build();
 
         ChatData chatData = aChatData().withId(chatId.value()).build();
-        List<ChatParticipant> participants = Arrays.asList(
-                aChatParticipant().build(),
-                aChatParticipant().build()
+        List<Participant> participants = Arrays.asList(
+                aParticipant().build(),
+                aParticipant().build()
         );
 
-        when(chatParticipantRepository.existsByChatIdAndParticipantId(chatId, participantId)).thenReturn(Boolean.TRUE);
+        when(participantRepository.existsByChatIdAndParticipantId(chatId, participantId)).thenReturn(Boolean.TRUE);
         when(chatDataSource.findById(chatId.value())).thenReturn(Optional.of(chatData));
-        when(chatParticipantRepository.getAllChatParticipants(chatId)).thenReturn(participants);
+        when(participantRepository.getAllChatParticipants(chatId)).thenReturn(participants);
         when(chatMapper.toEntity(chatData, participants)).thenReturn(
                 aChat().withChatId(chatId)
                         .withName(chatData.getName())
@@ -181,7 +181,7 @@ public class ChatRepositoryTest {
         chatRepository.insert(chat);
 
         verify(chatDataSource, times(1)).save(chatData);
-        verify(chatParticipantRepository, times(1)).saveAll(chat.getParticipants());
+        verify(participantRepository, times(1)).saveAll(chat.getParticipants());
     }
 
     @Test

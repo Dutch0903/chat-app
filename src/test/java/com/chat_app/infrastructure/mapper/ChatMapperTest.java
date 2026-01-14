@@ -1,7 +1,7 @@
 package com.chat_app.infrastructure.mapper;
 
 import com.chat_app.domain.entity.Chat;
-import com.chat_app.domain.entity.ChatParticipant;
+import com.chat_app.domain.entity.Participant;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.chat_app.testdata.ChatBuilder.aChat;
 import static com.chat_app.testdata.ChatDataBuilder.aChatData;
-import static com.chat_app.testdata.ChatParticipantBuilder.aChatParticipant;
+import static com.chat_app.testdata.ParticipantBuilder.aParticipant;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,12 +26,12 @@ public class ChatMapperTest {
     public void toEntity_ReturnsCorrectEntity() {
         ChatData chatData = aChatData().build();
 
-        List<ChatParticipant> chatParticipants = Arrays.asList(
-                aChatParticipant().build(),
-                aChatParticipant().build()
+        List<Participant> participants = Arrays.asList(
+                aParticipant().build(),
+                aParticipant().build()
         );
 
-        Chat chat = chatMapper.toEntity(chatData, chatParticipants);
+        Chat chat = chatMapper.toEntity(chatData, participants);
 
         assertEquals(chatData.getId(), chat.getId().value());
         assertEquals(chatData.getType(), chat.getType().name());
@@ -39,7 +39,7 @@ public class ChatMapperTest {
         assertEquals(chatData.getCreatedAt(), chat.getCreatedAt());
         assertEquals(chatData.getUpdatedAt(), chat.getUpdatedAt());
 
-        assertEquals(chatParticipants, chat.getParticipants());
+        assertEquals(participants, chat.getParticipants());
     }
 
     @Test

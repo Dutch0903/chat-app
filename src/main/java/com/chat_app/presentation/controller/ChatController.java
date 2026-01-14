@@ -2,7 +2,7 @@ package com.chat_app.presentation.controller;
 
 import com.chat_app.application.dto.ChatDetailsDto;
 import com.chat_app.application.dto.ChatDto;
-import com.chat_app.domain.entity.Message;
+import com.chat_app.infrastructure.Message;
 import com.chat_app.presentation.request.StartGroupChatRequest;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.application.service.ChatService;

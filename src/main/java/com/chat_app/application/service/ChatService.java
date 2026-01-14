@@ -3,7 +3,7 @@ package com.chat_app.application.service;
 import com.chat_app.application.dto.ChatDetailsDto;
 import com.chat_app.application.dto.ChatDto;
 import com.chat_app.domain.entity.Chat;
-import com.chat_app.domain.entity.ChatParticipant;
+import com.chat_app.domain.entity.Participant;
 import com.chat_app.domain.exception.ChatAlreadyExistsException;
 import com.chat_app.domain.exception.ForbiddenException;
 import com.chat_app.domain.factory.IdFactory;
@@ -50,8 +50,8 @@ public class ChatService {
                 ChatType.PRIVATE,
                 null,
                 Arrays.asList(
-                        new ChatParticipant(chatId, starter, ParticipantRole.MEMBER),
-                        new ChatParticipant(chatId, participantId, ParticipantRole.MEMBER)
+                        new Participant(chatId, starter, ParticipantRole.MEMBER),
+                        new Participant(chatId, participantId, ParticipantRole.MEMBER)
                 )
         );
 
@@ -69,7 +69,7 @@ public class ChatService {
                 ChatType.GROUP,
                 name,
                 participantIds.stream()
-                        .map(participantId -> new ChatParticipant(chatId, participantId, ParticipantRole.MEMBER))
+                        .map(participantId -> new Participant(chatId, participantId, ParticipantRole.MEMBER))
                         .toList()
         );
 

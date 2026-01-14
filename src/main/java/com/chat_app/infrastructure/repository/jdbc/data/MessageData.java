@@ -1,8 +1,8 @@
 package com.chat_app.infrastructure.repository.jdbc.data;
 
-import com.chat_app.domain.entity.ChatMessage;
+import com.chat_app.domain.entity.Message;
 import com.chat_app.domain.valueobjects.ChatId;
-import com.chat_app.domain.valueobjects.ChatMessageId;
+import com.chat_app.domain.valueobjects.MessageId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @Table("chat_messages")
-public class ChatMessageData {
+public class MessageData {
     @Id
     private UUID id;
     private UUID chatId;
@@ -24,8 +24,8 @@ public class ChatMessageData {
 
     private OffsetDateTime createdAt;
 
-    public static ChatMessageData fromEntity(ChatMessage chatMessage) {
-        return new ChatMessageData(
+    public static MessageData fromEntity(Message chatMessage) {
+        return new MessageData(
                 chatMessage.getId().value(),
                 chatMessage.getChatId().value(),
                 chatMessage.getSenderId().value(),
@@ -34,9 +34,9 @@ public class ChatMessageData {
         );
     }
 
-    public ChatMessage toEntity() {
-        return new ChatMessage(
-                new ChatMessageId(this.id),
+    public Message toEntity() {
+        return new Message(
+                new MessageId(this.id),
                 new ChatId(this.chatId),
                 new ParticipantId(this.senderId),
                 this.content,

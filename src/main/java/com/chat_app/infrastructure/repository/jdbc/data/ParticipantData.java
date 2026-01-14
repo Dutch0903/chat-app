@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table("chat_participants")
-public class ChatParticipantData implements Persistable<UUID> {
+public class ParticipantData implements Persistable<UUID> {
 
     @Id
     private UUID id;
@@ -26,7 +26,7 @@ public class ChatParticipantData implements Persistable<UUID> {
     @Transient
     private boolean isNew;
 
-    public ChatParticipantData(
+    public ParticipantData(
             UUID id,
             UUID chatId,
             UUID participantId,
@@ -44,12 +44,12 @@ public class ChatParticipantData implements Persistable<UUID> {
         return isNew;
     }
 
-    public ChatParticipantData setId(UUID id) {
+    public ParticipantData setId(UUID id) {
         this.id = id;
         return this;
     }
 
-    public ChatParticipantData setIsNew(boolean isNew) {
+    public ParticipantData setIsNew(boolean isNew) {
         this.isNew = isNew;
         return this;
     }

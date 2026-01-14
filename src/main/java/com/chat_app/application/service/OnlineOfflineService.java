@@ -1,6 +1,6 @@
 package com.chat_app.application.service;
 
-import com.chat_app.domain.entity.Message;
+import com.chat_app.infrastructure.Message;
 import com.chat_app.domain.entity.User;
 import com.chat_app.infrastructure.repository.UserRepository;
 import com.chat_app.infrastructure.security.UserDetailsImpl;

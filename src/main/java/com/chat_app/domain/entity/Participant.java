@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ChatParticipant {
+public class Participant {
     private ChatId chatId;
     private ParticipantId participantId;
     private ParticipantRole participantRole;

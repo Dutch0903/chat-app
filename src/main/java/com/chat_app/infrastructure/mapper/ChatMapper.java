@@ -1,7 +1,7 @@
 package com.chat_app.infrastructure.mapper;
 
 import com.chat_app.domain.entity.Chat;
-import com.chat_app.domain.entity.ChatParticipant;
+import com.chat_app.domain.entity.Participant;
 import com.chat_app.domain.type.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatData;
@@ -12,12 +12,12 @@ import java.util.List;
 @Component
 public class ChatMapper {
 
-    public Chat toEntity(ChatData chatData, List<ChatParticipant> chatParticipants) {
+    public Chat toEntity(ChatData chatData, List<Participant> participants) {
         return new Chat(
                 ChatId.from(chatData.getId()),
                 ChatType.valueOf(chatData.getType()),
                 chatData.getName(),
-                chatParticipants,
+                participants,
                 chatData.getCreatedAt(),
                 chatData.getUpdatedAt()
         );
