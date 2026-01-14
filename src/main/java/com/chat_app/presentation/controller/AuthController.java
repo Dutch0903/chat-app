@@ -9,6 +9,7 @@ import com.chat_app.presentation.response.JwtResponse;
 import com.chat_app.infrastructure.security.JwtUtils;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.application.service.RegistrationService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -82,6 +83,10 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(
+            description = "Get information about the logged in user",
+            operationId = "getCurrentUser"
+    )
     @GetMapping("/me")
     public ResponseEntity<?> me() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

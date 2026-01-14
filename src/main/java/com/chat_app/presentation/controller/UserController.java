@@ -1,9 +1,9 @@
 package com.chat_app.presentation.controller;
 
-import com.chat_app.domain.entity.User;
-import com.chat_app.presentation.response.UserResponse;
 import com.chat_app.application.service.OnlineOfflineService;
 import com.chat_app.application.service.UserService;
+import com.chat_app.domain.entity.User;
+import com.chat_app.presentation.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ public class UserController {
     private final OnlineOfflineService onlineOfflineService;
 
     @GetMapping("")
-    public ResponseEntity<?> get() {
+    public ResponseEntity<?> getUsers() {
         List<User> users = userService.getAllUsers();
 
         return ResponseEntity.ok(users.stream().map(UserResponse::from));

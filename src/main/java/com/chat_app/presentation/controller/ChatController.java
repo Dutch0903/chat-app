@@ -2,13 +2,13 @@ package com.chat_app.presentation.controller;
 
 import com.chat_app.application.dto.ChatDetailsDto;
 import com.chat_app.application.dto.ChatDto;
-import com.chat_app.infrastructure.Message;
-import com.chat_app.presentation.request.StartGroupChatRequest;
-import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.application.service.ChatService;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.domain.valueobjects.UserId;
+import com.chat_app.infrastructure.Message;
+import com.chat_app.infrastructure.security.UserDetailsImpl;
+import com.chat_app.presentation.request.StartGroupChatRequest;
 import com.chat_app.presentation.request.StartPrivateChatRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class ChatController {
     }
 
     @GetMapping("/chats")
-    public ResponseEntity<?> get(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> getChats(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserId userId = userDetails.getId();
 
         List<ChatDto> chats = this.chatService.getAllChats(new ParticipantId(userId.value()));
@@ -50,7 +50,7 @@ public class ChatController {
     }
 
     @GetMapping("/chats/{chatId}")
-    public ResponseEntity<?> getDetails(
+    public ResponseEntity<?> getChatDetails(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID chatId
     ) {
@@ -82,7 +82,7 @@ public class ChatController {
     ) {
         UserId userId = userDetails.getId();
 
-        List<ParticipantId> participantIds = new  ArrayList<>();
+        List<ParticipantId> participantIds = new ArrayList<>();
         participantIds.add(ParticipantId.from(userId.value()));
         startGroupChatRequest.participants().forEach(id -> {
             participantIds.add(ParticipantId.from(id));
