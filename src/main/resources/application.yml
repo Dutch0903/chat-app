@@ -15,6 +15,12 @@ spring:
     username: chat-app-dbadmin
     password: chat-app-dummy-password
 
+springdoc:
+  api-docs:
+    path: /openapi
+  swagger-ui:
+    path: /swagger
+
 jwt:
   secret: kKTDPrQuzfFaamgYGAUeZZEDMgtdGRvV
   expiration: 3600000
