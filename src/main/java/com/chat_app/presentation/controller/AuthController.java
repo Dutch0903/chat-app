@@ -1,14 +1,14 @@
 package com.chat_app.presentation.controller;
 
 import com.chat_app.application.dto.RegistrationData;
+import com.chat_app.application.service.RegistrationService;
 import com.chat_app.domain.exception.RoleNotFoundException;
 import com.chat_app.domain.exception.UsernameOrEmailAlreadyInUseException;
-import com.chat_app.presentation.request.LoginRequest;
-import com.chat_app.presentation.request.RegisterRequest;
-import com.chat_app.presentation.response.JwtResponse;
 import com.chat_app.infrastructure.security.JwtUtils;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
-import com.chat_app.application.service.RegistrationService;
+import com.chat_app.presentation.request.LoginRequest;
+import com.chat_app.presentation.request.RegisterRequest;
+import com.chat_app.presentation.response.AuthenticatedUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,11 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -39,7 +36,7 @@ public class AuthController {
     private RegistrationService registrationService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    public ResponseEntity<AuthenticatedUserResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.username(),
@@ -51,17 +48,6 @@ public class AuthController {
         String token = jwtUtils.generateToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles =
-                userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-
-        JwtResponse jwtResponse =
-                JwtResponse.builder()
-                        .token(token)
-                        .id(userDetails.getId().value())
-                        .username(userDetails.getUsername())
-                        .email(userDetails.getEmail())
-                        .roles(roles)
-                        .build();
 
         Cookie accessTokenCookie = new Cookie("access_token", token);
         accessTokenCookie.setHttpOnly(true);
@@ -69,7 +55,7 @@ public class AuthController {
 
         response.addCookie(accessTokenCookie);
 
-        return ResponseEntity.ok(jwtResponse);
+        return ResponseEntity.ok(AuthenticatedUserResponse.fromUserDetails(userDetails));
     }
 
     @PostMapping("/register")
@@ -88,11 +74,15 @@ public class AuthController {
             operationId = "getCurrentUser"
     )
     @GetMapping("/me")
-    public ResponseEntity<?> me() {
+    public ResponseEntity<AuthenticatedUserResponse> me() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        return ResponseEntity.ok(userDetails);
+        return ResponseEntity.ok(AuthenticatedUserResponse.fromUserDetails(userDetails));
     }
 }
