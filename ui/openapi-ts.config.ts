@@ -9,7 +9,7 @@ export default defineConfig({
     clean: true,
     format: "prettier",
     list: "eslint",
-    path: "./src/api",
+    path: "./src/api/generated",
     tsConfigPath: "off",
   },
   plugins: [
@@ -23,6 +23,8 @@ export default defineConfig({
       name: "@hey-api/client-fetch",
       throwOnError: true,
       strictBaseUrl: true,
+      // Relative to the hey-api output directory
+      runtimeConfigPath: '../config',
     },
     {
       name: "@hey-api/sdk",

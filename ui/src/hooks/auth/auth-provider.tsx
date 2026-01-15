@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { apiFetch } from "../../api";
+import { getCurrentUser, login as apiLogin } from "../../api";
 import type { User } from "../../types/user";
 import { AuthContext } from "./auth-context";
 
@@ -13,8 +13,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const data = await apiFetch<User>("/auth/me");
-      setUser(data);
+      const result = await getCurrentUser();
+      setUser(result.data);
     } catch (error) {
       console.error("Failed to check auth status:", error);
       setUser(null);
@@ -24,10 +24,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (username: string, password: string) => {
-    const data = await apiFetch<User>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
+    const data = await apiLogin({
+      body: {
+        username,
+        password
+      }
     });
+    console.log(data);
 
     setUser(data);
   };
