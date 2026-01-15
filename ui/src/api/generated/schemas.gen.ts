@@ -96,3 +96,25 @@ export const LoginRequestSchema = {
     },
   },
 } as const;
+
+export const AuthenticatedUserSchema = {
+  type: "object",
+  properties: {
+    id: {
+      type: "string",
+      format: "uuid",
+    },
+    username: {
+      type: "string",
+    },
+    email: {
+      type: "string",
+    },
+    authorities: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+  },
+} as const;

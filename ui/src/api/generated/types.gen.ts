@@ -33,6 +33,13 @@ export type LoginRequest = {
   password?: string;
 };
 
+export type AuthenticatedUser = {
+  id?: string;
+  username?: string;
+  email?: string;
+  authorities?: Array<string>;
+};
+
 export type StartPrivateChatData = {
   body: StartPrivateChatRequest;
   path?: never;
@@ -100,9 +107,7 @@ export type LoginResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: AuthenticatedUser;
 };
 
 export type LoginResponse = LoginResponses[keyof LoginResponses];
@@ -194,9 +199,7 @@ export type GetCurrentUserResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: AuthenticatedUser;
 };
 
 export type GetCurrentUserResponse =

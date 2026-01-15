@@ -24,7 +24,7 @@ export default defineConfig({
       throwOnError: true,
       strictBaseUrl: true,
       // Relative to the hey-api output directory
-      runtimeConfigPath: '../config',
+      runtimeConfigPath: "../config",
     },
     {
       name: "@hey-api/sdk",

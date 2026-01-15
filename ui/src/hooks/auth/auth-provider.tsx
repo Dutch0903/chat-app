@@ -1,10 +1,14 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { getCurrentUser, login as apiLogin } from "../../api";
-import type { User } from "../../types/user";
+import {
+  login as apiLogin,
+  register as apiRegister,
+  getCurrentUser,
+  type AuthenticatedUser,
+} from "../../api";
 import { AuthContext } from "./auth-context";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthenticatedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,15 +28,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (username: string, password: string) => {
-    const data = await apiLogin({
+    const result = await apiLogin({
       body: {
         username,
-        password
-      }
+        password,
+      },
     });
-    console.log(data);
 
-    setUser(data);
+    setUser(result.data);
   };
 
   const register = async (
@@ -40,16 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     username: string,
   ) => {
-    const data = await apiFetch<User>("/auth/register", {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        password,
-        username,
-      }),
+    await apiRegister({
+      body: { email, password, username },
     });
 
-    setUser(data);
+    setUser(null);
   };
 
   const logout = async () => {
