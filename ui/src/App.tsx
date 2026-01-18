@@ -1,27 +1,23 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { PrivateRoute } from "./components/PrivateRoute";
+import { Box, CssBaseline, ThemeProvider } from "@mui/material";
+import AppRoutes from "./AppRoutes";
 import { AuthProvider } from "./hooks/auth/auth-provider";
-import Chats from "./views/Chats/Chats";
-import Login from "./views/Login/Login";
-import Register from "./views/Register/Register";
+import theme from "./theme";
 
 function App() {
   return (
-    <div className="grid h-screen grid-rows-[auto_1fr_auto] bg-red-100">
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<PrivateRoute />}>
-              <Route path="/chats" element={<Chats />} />
-            </Route>
-
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box
+        minHeight="100vh"
+        display="flex"
+        flexDirection="column"
+        bgcolor="background.default"
+      >
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </Box>
+    </ThemeProvider>
   );
 }
 
