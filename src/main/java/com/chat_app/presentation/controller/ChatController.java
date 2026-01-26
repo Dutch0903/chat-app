@@ -6,7 +6,6 @@ import com.chat_app.application.service.ChatService;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.domain.valueobjects.UserId;
-import com.chat_app.infrastructure.Message;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.presentation.request.StartGroupChatRequest;
 import com.chat_app.presentation.request.StartPrivateChatRequest;
@@ -14,9 +13,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,16 +25,6 @@ public class ChatController {
 
     @Autowired
     private ChatService chatService;
-
-    @MessageMapping("/sendMessage")
-    @SendTo("/topic/messages")
-    public Message sendMessage(
-            Message message,
-            SimpMessageHeaderAccessor headerAccessor) {
-        System.out.println("Message received: " + message);
-
-        return message;
-    }
 
     @GetMapping("/chats")
     public ResponseEntity<?> getChats(@AuthenticationPrincipal UserDetailsImpl userDetails) {

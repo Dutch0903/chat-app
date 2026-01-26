@@ -8,15 +8,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class WebSocketEventListener {
     private final OnlineOfflineService onlineOfflineService;
-    private final Map<String, String> simpSessionIdToSubscriptionId = new ConcurrentHashMap<>();
 
     @EventListener
     public void handleConnectedEvent(SessionConnectedEvent sessionConnectedEvent) {

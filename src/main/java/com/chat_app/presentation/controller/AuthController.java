@@ -11,8 +11,10 @@ import com.chat_app.presentation.request.RegisterRequest;
 import com.chat_app.presentation.response.AuthenticatedUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,6 +59,25 @@ public class AuthController {
         response.addCookie(accessTokenCookie);
 
         return ResponseEntity.ok(AuthenticatedUserResponse.fromUserDetails(userDetails));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            new SecurityContextLogoutHandler().logout(
+                    request, response, authentication
+            );
+
+            Cookie accessTokenCookie = new Cookie("access_token", null);
+            accessTokenCookie.setHttpOnly(true);
+            accessTokenCookie.setPath("/");
+
+            response.addCookie(accessTokenCookie);
+        }
+
+        return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/register")

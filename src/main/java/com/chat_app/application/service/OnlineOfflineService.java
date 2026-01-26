@@ -1,63 +1,48 @@
 package com.chat_app.application.service;
 
-import com.chat_app.infrastructure.Message;
-import com.chat_app.domain.entity.User;
-import com.chat_app.infrastructure.repository.UserRepository;
-import com.chat_app.infrastructure.security.UserDetailsImpl;
-import com.chat_app.domain.type.MessageType;
+import com.chat_app.domain.event.UserWentOfflineEvent;
+import com.chat_app.domain.event.UserWentOnlineEvent;
 import com.chat_app.domain.valueobjects.UserId;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import com.chat_app.infrastructure.security.UserDetailsImpl;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@Slf4j
 public class OnlineOfflineService {
-    private final Set<UserId> onlineUsers;
-    private final UserRepository userRepository;
-    private final SimpMessageSendingOperations simpMessageSendingOperations;
+    private final Set<UserId> onlineUsers = ConcurrentHashMap.newKeySet();
+    private final ApplicationEventPublisher eventPublisher;
 
-    public OnlineOfflineService(UserRepository userRepository, SimpMessageSendingOperations simpMessageSendingOperations) {
-        this.userRepository = userRepository;
-        this.onlineUsers = new ConcurrentSkipListSet<>();
-        this.simpMessageSendingOperations = simpMessageSendingOperations;
+    public OnlineOfflineService(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
     }
 
     public void addOnlineUser(Principal principal) {
         UserDetailsImpl userDetails = getUserDetails(principal);
-
         onlineUsers.add(userDetails.getId());
 
-        this.simpMessageSendingOperations.convertAndSend("/topic/online",
-                Message.builder()
-                        .type(MessageType.USER_ONLINE)
-                        .username(userDetails.getUsername())
-                        .build()
+        eventPublisher.publishEvent(
+                new UserWentOnlineEvent(userDetails.getId(), Instant.now())
         );
-        log.info("{} is online", userDetails.getUsername());
     }
 
     public void removeOnlineUser(Principal principal) {
         UserDetailsImpl userDetails = getUserDetails(principal);
-        log.info("{} went offline", userDetails.getUsername());
         onlineUsers.remove(userDetails.getId());
 
-        this.simpMessageSendingOperations.convertAndSend("/topic/online",
-                Message.builder()
-                        .type(MessageType.USER_OFFLINE)
-                        .username(userDetails.getUsername())
-                        .build()
+        eventPublisher.publishEvent(
+                new UserWentOfflineEvent(userDetails.getId(), Instant.now())
         );
     }
 
-    public List<User> getOnlineUsers() {
-        return this.userRepository.findAllByIdIn(this.onlineUsers);
+    public List<UserId> getOnlineUsers() {
+        return this.onlineUsers.stream().toList();
     }
 
     private UserDetailsImpl getUserDetails(Principal principal) {
