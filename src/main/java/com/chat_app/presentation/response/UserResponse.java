@@ -3,14 +3,15 @@ package com.chat_app.presentation.response;
 import com.chat_app.domain.entity.User;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 @Schema(name = "User")
 public record UserResponse(
-        UUID id,
-        String username,
-        String email
+        @NotNull UUID id,
+        @NotNull String username,
+        @NotNull String email
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
