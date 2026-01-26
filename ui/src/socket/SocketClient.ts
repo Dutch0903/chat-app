@@ -12,7 +12,7 @@ export default class SocketClient {
 
     this.client = new Client({
       webSocketFactory: () => new SockJS(this.url),
-      //   debug: (str) => console.log("Debug log: " + str),
+      // debug: (str) => console.log("Debug log: " + str),
       onConnect: () => {
         console.log("Client Connected");
       },
@@ -46,7 +46,9 @@ export default class SocketClient {
       const body = JSON.parse(message.body) as { type: string } & {
         [key: string]: unknown;
       };
+
       const type = body.type as T;
+
       const factory = EventRegistry[type];
       if (type && handlers[type] && factory) {
         const event = factory(body);

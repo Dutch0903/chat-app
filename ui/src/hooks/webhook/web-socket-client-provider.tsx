@@ -6,14 +6,19 @@ import { WebSocketClientContext } from "./web-socket-client-context.ts";
 export const WebSocketClientProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { user, isLoading } = useAuth();
+  const { authenticatedUser, isLoading } = useAuth();
   const [socketClient, setSocketClient] = useState<SocketClient | undefined>(
     undefined,
   );
   const isConnecting = useRef(false);
 
   useEffect(() => {
-    if (!isLoading && user && !socketClient && !isConnecting.current) {
+    if (
+      !isLoading &&
+      authenticatedUser &&
+      !socketClient &&
+      !isConnecting.current
+    ) {
       isConnecting.current = true;
       const client = new SocketClient("http://localhost:8090/ws");
       client
@@ -31,7 +36,7 @@ export const WebSocketClientProvider: FC<{ children: React.ReactNode }> = ({
         socketClient.deactivate();
       }
     };
-  }, [user, isLoading, socketClient]);
+  }, [authenticatedUser, isLoading, socketClient]);
 
   return (
     <WebSocketClientContext.Provider value={{ socketClient }}>

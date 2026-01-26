@@ -34,10 +34,16 @@ export type LoginRequest = {
 };
 
 export type AuthenticatedUser = {
-  id?: string;
-  username?: string;
-  email?: string;
-  authorities?: Array<string>;
+  id: string;
+  username: string;
+  email: string;
+  authorities: Array<string>;
+};
+
+export type User = {
+  id: string;
+  username: string;
+  email: string;
 };
 
 export type StartPrivateChatData = {
@@ -96,6 +102,24 @@ export type RegisterResponses = {
 
 export type RegisterResponse = RegisterResponses[keyof RegisterResponses];
 
+export type LogoutData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/auth/logout";
+};
+
+export type LogoutResponses = {
+  /**
+   * OK
+   */
+  200: {
+    [key: string]: unknown;
+  };
+};
+
+export type LogoutResponse = LogoutResponses[keyof LogoutResponses];
+
 export type LoginData = {
   body: LoginRequest;
   path?: never;
@@ -123,9 +147,7 @@ export type GetUsersResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: Array<User>;
 };
 
 export type GetUsersResponse = GetUsersResponses[keyof GetUsersResponses];
@@ -141,9 +163,7 @@ export type GetOnlineUsersResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: Array<string>;
 };
 
 export type GetOnlineUsersResponse =

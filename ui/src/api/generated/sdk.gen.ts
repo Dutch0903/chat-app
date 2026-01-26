@@ -15,6 +15,8 @@ import type {
   GetUsersResponses,
   LoginData,
   LoginResponses,
+  LogoutData,
+  LogoutResponses,
   RegisterData,
   RegisterResponses,
   StartGroupChatData,
@@ -82,6 +84,14 @@ export const register = <ThrowOnError extends boolean = true>(
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+
+export const logout = <ThrowOnError extends boolean = true>(
+  options?: Options<LogoutData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<LogoutResponses, unknown, ThrowOnError>({
+    url: "/auth/logout",
+    ...options,
   });
 
 export const login = <ThrowOnError extends boolean = true>(

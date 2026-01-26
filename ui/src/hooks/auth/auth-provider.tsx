@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
   login as apiLogin,
+  logout as apiLogout,
   register as apiRegister,
   getCurrentUser,
   type AuthenticatedUser,
@@ -8,7 +9,8 @@ import {
 import { AuthContext } from "./auth-context";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthenticatedUser | null>(null);
+  const [authenticatedUser, setAuthenticatedUser] =
+    useState<AuthenticatedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,10 +20,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = async () => {
     try {
       const result = await getCurrentUser();
-      setUser(result.data);
+      setAuthenticatedUser(result.data);
     } catch (error) {
       console.error("Failed to check auth status:", error);
-      setUser(null);
+      setAuthenticatedUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -35,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
 
-    setUser(result.data);
+    setAuthenticatedUser(result.data);
   };
 
   const register = async (
@@ -47,19 +49,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: { email, password, username },
     });
 
-    setUser(null);
+    setAuthenticatedUser(null);
   };
 
   const logout = async () => {
-    await fetch("/auth/logout", {
-      method: "POST",
-    });
+    await apiLogout();
 
-    setUser(null);
+    setAuthenticatedUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{ authenticatedUser, login, register, logout, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

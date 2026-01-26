@@ -7,6 +7,7 @@ export {
   RegistrationDataSchema,
   StartGroupChatRequestSchema,
   StartPrivateChatRequestSchema,
+  UserSchema,
 } from "./schemas.gen";
 export {
   getChatDetails,
@@ -15,6 +16,7 @@ export {
   getOnlineUsers,
   getUsers,
   login,
+  logout,
   register,
   startGroupChat,
   startPrivateChat,
@@ -42,6 +44,9 @@ export type {
   LoginRequest,
   LoginResponse,
   LoginResponses,
+  LogoutData,
+  LogoutResponse,
+  LogoutResponses,
   RegisterData,
   RegisterRequest,
   RegisterResponse,
@@ -55,4 +60,5 @@ export type {
   StartPrivateChatRequest,
   StartPrivateChatResponse,
   StartPrivateChatResponses,
+  User,
 } from "./types.gen";

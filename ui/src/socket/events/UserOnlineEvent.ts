@@ -1,11 +1,11 @@
 export interface UserOnlineEvent {
-  readonly username: string;
+  readonly userId: string;
 }
 
 export const UserOnlineEventFactory = (obj: {
   [key: string]: unknown;
 }): UserOnlineEvent => {
   return {
-    username: obj.username as string,
+    userId: obj.userId as string,
   };
 };

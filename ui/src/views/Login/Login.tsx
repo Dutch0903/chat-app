@@ -4,9 +4,9 @@ import { useAuth } from "../../hooks/auth/use-auth.ts";
 import LoginForm from "./components/LoginForm";
 
 export default function Login() {
-  const { user } = useAuth();
+  const { authenticatedUser } = useAuth();
 
-  if (user) {
+  if (authenticatedUser) {
     return <Navigate to="/chats" replace />;
   }
 

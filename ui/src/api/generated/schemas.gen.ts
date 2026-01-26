@@ -117,4 +117,22 @@ export const AuthenticatedUserSchema = {
       },
     },
   },
+  required: ["authorities", "email", "id", "username"],
+} as const;
+
+export const UserSchema = {
+  type: "object",
+  properties: {
+    id: {
+      type: "string",
+      format: "uuid",
+    },
+    username: {
+      type: "string",
+    },
+    email: {
+      type: "string",
+    },
+  },
+  required: ["email", "id", "username"],
 } as const;

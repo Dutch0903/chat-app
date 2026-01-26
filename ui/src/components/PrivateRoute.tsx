@@ -5,14 +5,14 @@ import { WebSocketClientProvider } from "../hooks/webhook/web-socket-client-prov
 import Layout from "./Layout";
 
 export const PrivateRoute: FC = () => {
-  const { user, isLoading } = useAuth();
+  const { authenticatedUser, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return user ? (
+  return authenticatedUser ? (
     <WebSocketClientProvider>
       <Layout />
     </WebSocketClientProvider>
