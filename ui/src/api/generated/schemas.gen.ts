@@ -11,6 +11,68 @@ export const StartPrivateChatRequestSchema = {
   required: ["participantId"],
 } as const;
 
+export const ChatDetailsSchema = {
+  type: "object",
+  description: "Detailed chat information",
+  properties: {
+    id: {
+      type: "string",
+      format: "uuid",
+      description: "Chat ID",
+      example: "550e8400-e29b-41d4-a716-446655440000",
+    },
+    type: {
+      $ref: "#/components/schemas/ChatType",
+      description: "Chat type",
+    },
+    name: {
+      type: "string",
+      description: "Chat name",
+      example: "General",
+    },
+    createdAt: {
+      type: "string",
+      format: "date-time",
+      description: "Chat creation timestamp",
+    },
+    updatedAt: {
+      type: "string",
+      format: "date-time",
+      description: "Chat last update timestamp",
+    },
+    lastMessageAt: {
+      type: "string",
+      format: "date-time",
+      description: "Timestamp of the last message",
+    },
+    lastMessageSenderId: {
+      type: "string",
+      format: "uuid",
+      description: "ID of the user who sent the last message",
+    },
+    participants: {
+      type: "array",
+      description: "List of participant IDs",
+      items: {
+        type: "string",
+        format: "uuid",
+      },
+    },
+    unreadCount: {
+      type: "integer",
+      format: "int32",
+      description: "Number of unread messages",
+    },
+  },
+  required: ["createdAt", "id", "participants", "type", "updatedAt"],
+} as const;
+
+export const ChatTypeSchema = {
+  type: "string",
+  description: "Type of chat",
+  enum: ["PRIVATE", "GROUP"],
+} as const;
+
 export const StartGroupChatRequestSchema = {
   type: "object",
   properties: {
@@ -135,4 +197,35 @@ export const UserSchema = {
     },
   },
   required: ["email", "id", "username"],
+} as const;
+
+export const ChatSchema = {
+  type: "object",
+  description: "Chat details response",
+  properties: {
+    id: {
+      type: "string",
+      format: "uuid",
+      description: "Chat ID",
+      example: "550e8400-e29b-41d4-a716-446655440000",
+    },
+    type: {
+      $ref: "#/components/schemas/ChatType",
+      description: "Chat type",
+    },
+    name: {
+      type: "string",
+      description: "Chat name",
+      example: "General",
+    },
+    participants: {
+      type: "array",
+      description: "List of participant IDs",
+      items: {
+        type: "string",
+        format: "uuid",
+      },
+    },
+  },
+  required: ["id", "participants", "type"],
 } as const;

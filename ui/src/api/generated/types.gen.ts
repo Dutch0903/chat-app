@@ -8,6 +8,58 @@ export type StartPrivateChatRequest = {
   participantId: string;
 };
 
+/**
+ * Detailed chat information
+ */
+export type ChatDetails = {
+  /**
+   * Chat ID
+   */
+  id: string;
+  /**
+   * Chat type
+   */
+  type: ChatType;
+  /**
+   * Chat name
+   */
+  name?: string;
+  /**
+   * Chat creation timestamp
+   */
+  createdAt: string;
+  /**
+   * Chat last update timestamp
+   */
+  updatedAt: string;
+  /**
+   * Timestamp of the last message
+   */
+  lastMessageAt?: string;
+  /**
+   * ID of the user who sent the last message
+   */
+  lastMessageSenderId?: string;
+  /**
+   * List of participant IDs
+   */
+  participants: Array<string>;
+  /**
+   * Number of unread messages
+   */
+  unreadCount?: number;
+};
+
+/**
+ * Type of chat
+ */
+export const ChatType = { PRIVATE: "PRIVATE", GROUP: "GROUP" } as const;
+
+/**
+ * Type of chat
+ */
+export type ChatType = (typeof ChatType)[keyof typeof ChatType];
+
 export type StartGroupChatRequest = {
   name: string;
   participants: Array<string>;
@@ -46,6 +98,28 @@ export type User = {
   email: string;
 };
 
+/**
+ * Chat details response
+ */
+export type Chat = {
+  /**
+   * Chat ID
+   */
+  id: string;
+  /**
+   * Chat type
+   */
+  type: ChatType;
+  /**
+   * Chat name
+   */
+  name?: string;
+  /**
+   * List of participant IDs
+   */
+  participants: Array<string>;
+};
+
 export type StartPrivateChatData = {
   body: StartPrivateChatRequest;
   path?: never;
@@ -57,9 +131,7 @@ export type StartPrivateChatResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: ChatDetails;
 };
 
 export type StartPrivateChatResponse =
@@ -76,9 +148,7 @@ export type StartGroupChatResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: ChatDetails;
 };
 
 export type StartGroupChatResponse =
@@ -180,9 +250,7 @@ export type GetChatsResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: Array<Chat>;
 };
 
 export type GetChatsResponse = GetChatsResponses[keyof GetChatsResponses];
@@ -200,9 +268,7 @@ export type GetChatDetailsResponses = {
   /**
    * OK
    */
-  200: {
-    [key: string]: unknown;
-  };
+  200: ChatDetails;
 };
 
 export type GetChatDetailsResponse =
