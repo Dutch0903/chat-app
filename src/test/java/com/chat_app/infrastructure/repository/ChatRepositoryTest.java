@@ -3,7 +3,7 @@ package com.chat_app.infrastructure.repository;
 import com.chat_app.domain.entity.Chat;
 import com.chat_app.domain.entity.Participant;
 import com.chat_app.domain.exception.ChatCreationException;
-import com.chat_app.domain.type.ChatType;
+import com.chat_app.domain.enums.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import com.chat_app.infrastructure.mapper.ChatMapper;

@@ -1,6 +1,7 @@
 package com.chat_app.application.dto;
 
 import com.chat_app.domain.entity.Chat;
+import com.chat_app.presentation.enums.ChatType;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public record ChatDetailsDto(
         UUID id,
-        String type,
+        ChatType type,
         String name,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt,
@@ -20,7 +21,7 @@ public record ChatDetailsDto(
     public static ChatDetailsDto from(Chat chat) {
         return new ChatDetailsDto(
                 chat.getId().value(),
-                chat.getType().name(),
+                ChatType.valueOf(chat.getType().name()),
                 chat.getName(),
                 chat.getCreatedAt(),
                 chat.getUpdatedAt(),

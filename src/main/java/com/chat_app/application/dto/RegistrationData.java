@@ -1,6 +1,6 @@
 package com.chat_app.application.dto;
 
-import com.chat_app.domain.type.RoleName;
+import com.chat_app.domain.enums.RoleName;
 
 import java.util.Set;
 

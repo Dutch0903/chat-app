@@ -1,6 +1,6 @@
 package com.chat_app.infrastructure.repository.jdbc.data;
 
-import com.chat_app.domain.type.ParticipantRole;
+import com.chat_app.domain.enums.ParticipantRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

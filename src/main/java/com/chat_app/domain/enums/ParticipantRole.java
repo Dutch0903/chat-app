@@ -1,4 +1,4 @@
-package com.chat_app.domain.type;
+package com.chat_app.domain.enums;
 
 public enum ParticipantRole {
     ADMIN,

@@ -1,4 +1,4 @@
-package com.chat_app.domain.type;
+package com.chat_app.domain.enums;
 
 import java.util.Arrays;
 import java.util.Set;

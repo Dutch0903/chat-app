@@ -6,7 +6,7 @@ import com.chat_app.domain.entity.User;
 import com.chat_app.domain.exception.RoleNotFoundException;
 import com.chat_app.domain.exception.UsernameOrEmailAlreadyInUseException;
 import com.chat_app.infrastructure.repository.UserRepository;
-import com.chat_app.domain.type.RoleName;
+import com.chat_app.domain.enums.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

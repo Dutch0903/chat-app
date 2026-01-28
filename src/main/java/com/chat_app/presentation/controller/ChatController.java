@@ -2,6 +2,7 @@ package com.chat_app.presentation.controller;
 
 import com.chat_app.application.dto.ChatDetailsDto;
 import com.chat_app.application.dto.ChatDto;
+import com.chat_app.application.mapper.ChatMapper;
 import com.chat_app.application.service.ChatService;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
@@ -9,6 +10,8 @@ import com.chat_app.domain.valueobjects.UserId;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.presentation.request.StartGroupChatRequest;
 import com.chat_app.presentation.request.StartPrivateChatRequest;
+import com.chat_app.presentation.response.ChatDetailsResponse;
+import com.chat_app.presentation.response.ChatResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,28 +29,34 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
+    @Autowired
+    private ChatMapper chatMapper;
+
     @GetMapping("/chats")
-    public ResponseEntity<?> getChats(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<List<ChatResponse>> getChats(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserId userId = userDetails.getId();
 
         List<ChatDto> chats = this.chatService.getAllChats(new ParticipantId(userId.value()));
+        List<ChatResponse> responses = chats.stream()
+                .map(chatMapper::toChatResponse)
+                .toList();
 
-        return new ResponseEntity<>(chats, HttpStatus.OK);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/chats/{chatId}")
-    public ResponseEntity<?> getChatDetails(
+    public ResponseEntity<ChatDetailsResponse> getChatDetails(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID chatId
     ) {
         UserId userId = userDetails.getId();
         ChatDetailsDto details = chatService.getChatDetails(ChatId.from(chatId), new ParticipantId(userId.value()));
 
-        return new ResponseEntity<>(details, HttpStatus.OK);
+        return new ResponseEntity<>(chatMapper.toChatDetailsResponse(details), HttpStatus.OK);
     }
 
     @PostMapping("/chats/private")
-    public ResponseEntity<?> startPrivateChat(
+    public ResponseEntity<ChatDetailsResponse> startPrivateChat(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody StartPrivateChatRequest startPrivateChatRequest
     ) {
@@ -58,11 +67,11 @@ public class ChatController {
                 ParticipantId.from(startPrivateChatRequest.participantId())
         );
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(details);
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatMapper.toChatDetailsResponse(details));
     }
 
     @PostMapping("/chats/group")
-    public ResponseEntity<?> startGroupChat(
+    public ResponseEntity<ChatDetailsResponse> startGroupChat(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody StartGroupChatRequest startGroupChatRequest
     ) {
@@ -79,6 +88,8 @@ public class ChatController {
                 participantIds
         );
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(details);
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatMapper.toChatDetailsResponse(details));
     }
 }
+
+

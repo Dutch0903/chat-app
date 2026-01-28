@@ -1,6 +1,6 @@
 package com.chat_app.domain.entity;
 
-import com.chat_app.domain.type.ParticipantRole;
+import com.chat_app.domain.enums.ParticipantRole;
 import com.chat_app.domain.valueobjects.ChatId;
 import com.chat_app.domain.valueobjects.ParticipantId;
 import lombok.AllArgsConstructor;

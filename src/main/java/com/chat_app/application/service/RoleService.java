@@ -3,7 +3,7 @@ package com.chat_app.application.service;
 import com.chat_app.domain.entity.Role;
 import com.chat_app.domain.exception.RoleNotFoundException;
 import com.chat_app.infrastructure.repository.RoleRepository;
-import com.chat_app.domain.type.RoleName;
+import com.chat_app.domain.enums.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

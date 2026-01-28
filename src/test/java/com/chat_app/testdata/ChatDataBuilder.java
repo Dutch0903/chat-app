@@ -1,6 +1,6 @@
 package com.chat_app.testdata;
 
-import com.chat_app.domain.type.ChatType;
+import com.chat_app.domain.enums.ChatType;
 import com.chat_app.infrastructure.repository.jdbc.data.ChatData;
 
 import java.time.OffsetDateTime;

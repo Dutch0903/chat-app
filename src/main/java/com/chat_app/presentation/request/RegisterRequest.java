@@ -1,7 +1,7 @@
 package com.chat_app.presentation.request;
 
 import com.chat_app.application.dto.RegistrationData;
-import com.chat_app.domain.type.RoleName;
+import com.chat_app.domain.enums.RoleName;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

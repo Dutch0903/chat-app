@@ -4,7 +4,7 @@ import com.chat_app.domain.exception.CannotAddParticipantToPrivateChatException;
 import com.chat_app.domain.exception.CannotRemoveParticipantFromPrivateChatException;
 import com.chat_app.domain.exception.ChatParticipantLimitExceededException;
 import com.chat_app.domain.exception.ParticipantAlreadyInChatException;
-import com.chat_app.domain.type.ChatType;
+import com.chat_app.domain.enums.ChatType;
 import com.chat_app.domain.valueobjects.ChatId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
