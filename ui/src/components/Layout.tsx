@@ -40,11 +40,15 @@ export default function Layout() {
         sx={{
           flexGrow: 1,
           bgcolor: "background.default",
-          p: 3,
+          display: "flex",
+          flexDirection: "column",
+          p: 4,
         }}
       >
         <Toolbar />
-        <Outlet />
+        <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+          <Outlet />
+        </Box>
       </Box>
     </Box>
   );

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { getChatDetails, type ChatDetails } from "../../api";
 
-interface ExistingChatViewProps {
+interface ExistingChatProps {
   chatId: string;
 }
 
-export default function ExistingChatView({ chatId }: ExistingChatViewProps) {
+export default function ExistingChat({ chatId }: ExistingChatProps) {
   const [chat, setChat] = useState<ChatDetails | null>(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);

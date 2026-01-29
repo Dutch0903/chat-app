@@ -2,11 +2,11 @@ import { useState } from "react";
 import { startPrivateChat, getUsers, type User } from "../../api";
 import { useNavigate } from "react-router-dom";
 
-interface NewChatViewProps {
+interface NewChatProps {
   userId: string;
 }
 
-export default function NewChatView({ userId }: NewChatViewProps) {
+export default function NewChat({ userId }: NewChatProps) {
   const [message, setMessage] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +50,7 @@ export default function NewChatView({ userId }: NewChatViewProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 font-bold">
+      <div className="border-b border-gray-200 font-bold">
         New chat with {user?.username || "..."}
       </div>
 
@@ -60,7 +60,7 @@ export default function NewChatView({ userId }: NewChatViewProps) {
       </div>
 
       {/* Input area */}
-      <div className="p-4 border-t border-gray-200 flex gap-2">
+      <div className="border-t border-gray-200 flex gap-2">
         <input
           type="text"
           placeholder="Type a message..."

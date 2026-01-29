@@ -1,21 +1,21 @@
-import { useParams, useSearchParams, useLocation } from "react-router-dom";
-import NewChatView from "./NewChatView";
-import ExistingChatView from "./ExistingChatView";
+import { useParams, useSearchParams } from "react-router-dom";
+import NewChat from "./NewChat";
+import ExistingChat from "./ExistingChat";
 
 export default function Chat() {
   const params = useParams();
   const [searchParams] = useSearchParams();
-  const location = useLocation();
 
-  // Check if we're on the "new chat" route
-  const isNewChat = location.pathname === "/chats/new";
+  const isNewChat = searchParams.has('userId');
+
 
   if (isNewChat) {
     const userId = searchParams.get("userId");
+    
     if (!userId) {
       return <div>Error: No user specified</div>;
     }
-    return <NewChatView userId={userId} />;
+    return <NewChat userId={userId} />;
   }
 
   // Existing chat
@@ -24,5 +24,5 @@ export default function Chat() {
     return <div>Error: No chat ID</div>;
   }
 
-  return <ExistingChatView chatId={chatId} />;
+  return <ExistingChat chatId={chatId} />;
 }
