@@ -6,5 +6,5 @@ CREATE TABLE chat_messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (chat_id) REFERENCES chats(id)
+    FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
 );
