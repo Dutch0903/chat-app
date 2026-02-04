@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class ParticipantRepository {
+class ParticipantRepository {
     @Autowired
     private ParticipantDataSource participantDataSource;
 
@@ -62,7 +62,7 @@ public class ParticipantRepository {
             participantDataSource.saveAll(
                     result.getAdditions()
                             .stream()
-                            .map(chatParticipantData -> chatParticipantData.setId(UUID.randomUUID()).setIsNew(true))
+                            .map(participantData -> participantData.setId(UUID.randomUUID()).setIsNew(true))
                             .toList()
             );
         }

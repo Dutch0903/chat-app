@@ -1,6 +1,5 @@
 package com.chat_app.presentation.controller;
 
-import com.chat_app.application.service.ChatMessageService;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.presentation.request.CreateMessageRequest;
 import com.chat_app.presentation.response.MessageResponse;

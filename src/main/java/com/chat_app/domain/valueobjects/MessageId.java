@@ -8,4 +8,8 @@ public record MessageId(UUID value) {
     public MessageId {
         Assert.notNull(value, "Chat message id must not be null");
     }
+
+    public static MessageId from(UUID value) {
+        return new MessageId(value);
+    }
 }

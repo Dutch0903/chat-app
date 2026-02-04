@@ -23,24 +23,4 @@ public class MessageData {
     private String content;
 
     private OffsetDateTime createdAt;
-
-    public static MessageData fromEntity(Message chatMessage) {
-        return new MessageData(
-                chatMessage.getId().value(),
-                chatMessage.getChatId().value(),
-                chatMessage.getSenderId().value(),
-                chatMessage.getContent(),
-                chatMessage.getCreatedAt()
-        );
-    }
-
-    public Message toEntity() {
-        return new Message(
-                new MessageId(this.id),
-                new ChatId(this.chatId),
-                new ParticipantId(this.senderId),
-                this.content,
-                this.createdAt
-        );
-    }
 }
