@@ -1,5 +1,10 @@
 package com.chat_app.presentation.controller;
 
+import com.chat_app.application.dto.MessageDto;
+import com.chat_app.application.mapper.MessageMapper;
+import com.chat_app.application.service.MessageService;
+import com.chat_app.domain.valueobjects.ChatId;
+import com.chat_app.domain.valueobjects.SenderId;
 import com.chat_app.infrastructure.security.UserDetailsImpl;
 import com.chat_app.presentation.request.CreateMessageRequest;
 import com.chat_app.presentation.response.MessageResponse;
@@ -19,7 +24,10 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class ChatMessageController {
+public class MessageMessageController {
+
+    private final MessageService messageService;
+    private final MessageMapper messageMapper;
 
     @MessageMapping("/chat/{chatId}/send")
     @SendTo("/topic/chat/{chatId}")
@@ -31,10 +39,13 @@ public class ChatMessageController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        return new MessageResponse(
-                userDetails.getId().value(),
+        MessageDto messageDto = messageService.sendMessage(
+                ChatId.from(chatId),
+                SenderId.from(userDetails.getId().value()),
                 message.getContent(),
-                Instant.now()
+                message.getTimestamp()
         );
+
+        return messageMapper.toMessageResponse(messageDto);
     }
 }

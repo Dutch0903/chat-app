@@ -53,6 +53,7 @@ export function useChatMessages({
       endpoint: `/app/chat/${chatId}/send`,
       body: {
         content: content.trim(),
+        timestamp: new Date().toISOString()
       },
     });
   };
