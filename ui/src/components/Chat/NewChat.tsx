@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { startPrivateChat, getUsers, type User } from "../../api";
 import { useNavigate } from "react-router-dom";
+import { getUsers, startPrivateChat, type User } from "../../api";
 
 interface NewChatProps {
   userId: string;
@@ -34,7 +34,11 @@ export default function NewChat({ userId }: NewChatProps) {
 
       // Navigate to the newly created chat
       // Assuming the response contains the chat details
-      if (response.data && typeof response.data === "object" && "id" in response.data) {
+      if (
+        response.data &&
+        typeof response.data === "object" &&
+        "id" in response.data
+      ) {
         navigate(`/chats/${response.data.id}`);
       } else {
         // If response doesn't have chat ID, refresh chats and navigate

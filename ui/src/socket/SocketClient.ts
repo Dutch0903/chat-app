@@ -1,6 +1,6 @@
 import { Client, type IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client/dist/sockjs";
-import { EventRegistry } from "./EventRegistry";
+import { MessageRegistry, type MessageTypeToken } from "./MessageRegistry";
 import type { AwaitConnectionOptions, Message } from "./SocketClient.types";
 
 export default class SocketClient {
@@ -36,28 +36,58 @@ export default class SocketClient {
 
   isConnected = () => this.client.connected;
 
-  subscribe = <T extends keyof typeof EventRegistry>(
-    topic: string,
-    handlers: {
-      [K in T]: (event: ReturnType<(typeof EventRegistry)[K]>) => void;
-    },
-  ) => {
+  /**
+   * Subscribe to a message type with parameters
+   */
+  subscribe<T, P extends Record<string, string>>(
+    messageToken: MessageTypeToken<T, P>,
+    params: P,
+    callback: (data: T) => void,
+  ): ReturnType<Client["subscribe"]>;
+
+  /**
+   * Subscribe to a message type without parameters
+   */
+  subscribe<T>(
+    messageToken: MessageTypeToken<T, Record<string, never>>,
+    callback: (data: T) => void,
+  ): ReturnType<Client["subscribe"]>;
+
+  /**
+   * Implementation
+   */
+  subscribe<T, P extends Record<string, string>>(
+    messageToken: MessageTypeToken<T, P>,
+    paramsOrCallback: P | ((data: T) => void),
+    callback?: (data: T) => void,
+  ) {
+    // Determine if params were provided
+    const hasParams = typeof paramsOrCallback !== "function";
+    const params = hasParams ? paramsOrCallback : undefined;
+    const cb = hasParams ? callback! : (paramsOrCallback as (data: T) => void);
+
+    const topic = MessageRegistry.getTopic(messageToken.__messageType, params);
+    if (!topic) {
+      throw new Error(
+        `Cannot subscribe: message type "${messageToken.__messageType}" is not registered`,
+      );
+    }
+
+    const factory = MessageRegistry.getFactory<T>(messageToken.__messageType);
+    if (!factory) {
+      throw new Error(
+        `Cannot subscribe: no factory found for message type "${messageToken.__messageType}"`,
+      );
+    }
+
     return this.client.subscribe(topic, (message: IMessage) => {
-      const body = JSON.parse(message.body) as { type: string } & {
-        [key: string]: unknown;
-      };
-
-      const type = body.type as T;
-
-      const factory = EventRegistry[type];
-      if (type && handlers[type] && factory) {
-        const event = factory(body);
-        handlers[type](
-          event as ReturnType<(typeof EventRegistry)[typeof type]>,
-        );
-      }
+      console.log(message);
+      const body = JSON.parse(message.body) as Record<string, unknown>;
+      const typedData = factory(body);
+      console.log(body, typedData);
+      cb(typedData);
     });
-  };
+  }
 
   awaitConnection = async (
     options: AwaitConnectionOptions = {

@@ -7,7 +7,7 @@ export default function Login() {
   const { authenticatedUser } = useAuth();
 
   if (authenticatedUser) {
-    return <Navigate to="/chats" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (

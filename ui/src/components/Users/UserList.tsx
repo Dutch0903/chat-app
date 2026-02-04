@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { type User } from "../../api";
 import { useAuth } from "../../hooks/auth/use-auth";
-import { useUsers } from "../../hooks/users";
 import { useChats } from "../../hooks/chats";
+import { useUsers } from "../../hooks/useUsers";
 import UserListItem from "./UserListItem";
 
 function UserList() {
@@ -19,7 +19,7 @@ function UserList() {
       (chat) =>
         chat.type === "PRIVATE" &&
         chat.participants.includes(userId) &&
-        chat.participants.includes(authenticatedUser?.id || "")
+        chat.participants.includes(authenticatedUser?.id || ""),
     );
 
     if (existingChat) {

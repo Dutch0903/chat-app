@@ -1,16 +1,16 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Chat from "./components/Chat/Chat";
 import { PrivateRoute } from "./components/PrivateRoute";
-import Chats from "./views/Chats/Chats";
+import Dashboard from "./views/Dashboard/Dashboard";
 import Login from "./views/Login/Login";
 import Register from "./views/Register/Register";
-import Chat from "./components/Chat/Chat";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<PrivateRoute />}>
-          <Route path="/chats" element={<Chats />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/chats/new" element={<Chat />} />
           <Route path="/chats/:id" element={<Chat />} />
         </Route>
