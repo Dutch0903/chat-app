@@ -31,7 +31,7 @@ public class MessageService {
                 timestamp
         );
 
-//        messageRepository.save(message);
+        messageRepository.insert(message);
 
         return MessageDto.from(message);
     }
